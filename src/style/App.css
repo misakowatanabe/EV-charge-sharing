@@ -3,22 +3,16 @@ a:-webkit-any-link {
   color: #242424;
 }
 
-/* Create and update start */
+/* Textfield start */
 
 .title {
   margin: 0px 0px 5px 5px;
 }
 
-.textfield-title {
+.textfield {
   background-color: #ffffff;
   width: 100%;
   margin-bottom: 20px;
-}
-
-.textfield-body {
-  background-color: #ffffff;
-  margin: 0px 0px 30px 0px;
-  width: 100%;
 }
 
 .error-message {
@@ -26,7 +20,7 @@ a:-webkit-any-link {
   margin-left: 5px;
 }
 
-/* Create and update end */
+/* Textfield end */
 
 /* paper start */
 

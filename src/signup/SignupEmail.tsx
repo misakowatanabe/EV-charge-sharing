@@ -10,7 +10,7 @@ export default function SignupEmail({ email, setEmail }: signupEmailProps) {
   return (
     <div>
       <div className="title">Email</div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           variant="outlined"
           name="email"

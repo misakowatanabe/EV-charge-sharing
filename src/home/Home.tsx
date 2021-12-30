@@ -20,7 +20,7 @@ export default function Home() {
         }}
       >
         <form noValidate autoComplete="off" onSubmit={handleSubmit}>
-          <div className="textfield-title">
+          <div className="textfield">
             <TextField
               variant="outlined"
               name="search"

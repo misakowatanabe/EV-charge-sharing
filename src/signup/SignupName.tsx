@@ -10,7 +10,7 @@ export default function SignupName({ name, setName }: signupNameProps) {
   return (
     <div>
       <div className="title">User Name</div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           autoFocus
           variant="outlined"

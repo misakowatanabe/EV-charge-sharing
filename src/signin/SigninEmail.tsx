@@ -10,7 +10,7 @@ export default function SigninEmail({ email, setEmail }: signinEmailProps) {
   return (
     <div>
       <div className="title">Email</div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           autoFocus
           variant="outlined"

@@ -13,9 +13,8 @@ export default function SignupNumberPlate({
   return (
     <div>
       <div className="title">Number Plate</div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
-          autoFocus
           variant="outlined"
           name="name"
           style={{ width: "100%" }}

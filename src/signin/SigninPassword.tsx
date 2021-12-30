@@ -7,7 +7,10 @@ type signinPasswordProps = {
   setPassword: Dispatch<SetStateAction<string>>;
 };
 
-export default function SigninPassword({ password, setPassword }: signinPasswordProps) {
+export default function SigninPassword({
+  password,
+  setPassword,
+}: signinPasswordProps) {
   const [passwordShown, setPasswordShown] = useState(false);
 
   return (
@@ -19,7 +22,7 @@ export default function SigninPassword({ password, setPassword }: signinPassword
           setPasswordShown={setPasswordShown}
         />
       </div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           variant="outlined"
           name="password"

@@ -27,7 +27,7 @@ export default function SignupPassword({
           setPasswordShown={setPasswordShown}
         />
       </div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           variant="outlined"
           name="password"
@@ -44,7 +44,7 @@ export default function SignupPassword({
           setPasswordShown={setConfirmPasswordShown}
         />
       </div>
-      <div className="textfield-title">
+      <div className="textfield">
         <TextField
           variant="outlined"
           name="confirmPassword"
