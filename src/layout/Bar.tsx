@@ -1,8 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { useAppSelector } from "../context/Hooks";
-import { selectProfileData } from "../context/slices/ProfileDataSlice";
-import Avatar from "@mui/material/Avatar";
-import PersonIcon from "@mui/icons-material/Person";
+import SimpleProfile from "./SimpleProfile";
 import AppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -15,9 +12,6 @@ type barProps = {
 };
 
 export default function Bar({ handleDrawerToggle }: barProps) {
-  const profile = useAppSelector(selectProfileData);
-  var name = profile.name;
-
   return (
     <div>
       <CssBaseline />
@@ -45,21 +39,12 @@ export default function Bar({ handleDrawerToggle }: barProps) {
               variant="h6"
               noWrap
               component="div"
-              style={{ color: "#ffffff" }}
+              sx={{ color: "#ffffff" }}
             >
               EV Charge Sharing
             </Typography>
           </NavLink>
-          <Typography
-            variant="h6"
-            component="div"
-            style={{ color: "#ffffff", fontWeight: 400, margin: "0 10px 0 auto" }}
-          >
-            {name}
-          </Typography>
-          <Avatar alt="Avatar" sx={{ width: 40, height: 40 }}>
-            <PersonIcon style={{ fontSize: "30px" }} />
-          </Avatar>
+          <SimpleProfile />
         </Toolbar>
       </AppBar>
     </div>

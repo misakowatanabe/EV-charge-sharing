@@ -4,6 +4,7 @@ import { useAppDispatch } from "./context/Hooks";
 import { updateUserAuthData } from "./context/slices/UserAuthDataSlice";
 import { updateMessageData } from "./context/slices/MessageDataSlice";
 import { updateProfileData } from "./context/slices/ProfileDataSlice";
+import { updateIsLoadingData } from "./context/slices/IsLoadingDataSlice";
 import "./style/App.css";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { FirebaseConfig } from "./firebase/Firebase";
@@ -22,7 +23,6 @@ import Error from "./error/Error";
 function App() {
   FirebaseConfig();
   const auth = getAuth();
-  // const userAuth = useAppSelector((state) => state.userAuthData.value);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -53,7 +53,7 @@ function App() {
         } catch (error) {
           console.log(error);
         }
-        
+
         // const socketTodo = io(`${ENDPOINT}`);
         // socketTodo.on("newChangesInTodos", (todoList) => {
         //   dispatch(updateMessageData(todoList));
@@ -61,6 +61,8 @@ function App() {
         const socketProfile = io(`${ENDPOINT}`);
         socketProfile.on("newChangesInProfile", (profileList) => {
           dispatch(updateProfileData(profileList));
+          dispatch(updateIsLoadingData(false));
+          console.log(`Loading OK`);
         });
         console.log("Socket opened");
 
@@ -101,7 +103,7 @@ function App() {
         dispatch(updateUserAuthData(false));
         dispatch(updateMessageData([{ id: 0, message: "", date: "" }]));
         dispatch(updateProfileData([{ userUid: 0, name: "", email: "" }]));
-        // dispatch(updateIsLoadingData(true));
+        dispatch(updateIsLoadingData(true));
         // dispatch(updateProfileImageData(null));
 
         clearTimeout(userSessionTimeout);
