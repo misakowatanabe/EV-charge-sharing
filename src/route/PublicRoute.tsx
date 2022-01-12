@@ -4,9 +4,9 @@ import { selectUserAuthData } from "../context/slices/UserAuthDataSlice";
 import PublicLayout from "../layout/PublicLayout";
 
 const PublicRoute = () => {
-  const userAuthData = useSelector(selectUserAuthData);
+  const userAuth = useSelector(selectUserAuthData);
 
-  if (!userAuthData) {
+  if (!userAuth) {
     return (
       <div className="Login">
         <PublicLayout>

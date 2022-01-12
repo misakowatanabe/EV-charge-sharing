@@ -1,15 +1,15 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectUserAuthData } from "../context/slices/UserAuthDataSlice";
-import { selectIsLoadingData } from "../context/slices/IsLoadingDataSlice";
+import { selectLoadingData } from "../context/slices/LoadingDataSlice";
 import PrivateLayout from "../layout/PrivateLayout";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const PrivateRoute = () => {
   const userAuth = useSelector(selectUserAuthData);
-  const isLoading = useSelector(selectIsLoadingData);
+  const loading = useSelector(selectLoadingData);
 
-  if (isLoading) {
+  if (loading === "loading" || loading === "initial") {
     return (
       <PrivateLayout>
         <div

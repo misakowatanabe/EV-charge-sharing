@@ -4,11 +4,11 @@ import { useAppDispatch } from "./context/Hooks";
 import { updateUserAuthData } from "./context/slices/UserAuthDataSlice";
 import { updateMessageData } from "./context/slices/MessageDataSlice";
 import { updateProfileData } from "./context/slices/ProfileDataSlice";
-import { updateIsLoadingData } from "./context/slices/IsLoadingDataSlice";
+import { updateLoadingData } from "./context/slices/LoadingDataSlice";
 import "./style/App.css";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { FirebaseConfig } from "./firebase/Firebase";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { ENDPOINT } from "./Config";
 import PublicRoute from "./route/PublicRoute";
 import PrivateRoute from "./route/PrivateRoute";
@@ -31,6 +31,7 @@ function App() {
 
       if (user) {
         // User is signed in
+        dispatch(updateLoadingData("loading"));
         dispatch(updateUserAuthData(true));
         const uid = user.uid;
         const uidData = { uid: uid };
@@ -61,7 +62,7 @@ function App() {
         const socketProfile = io(`${ENDPOINT}`);
         socketProfile.on("newChangesInProfile", (profileList) => {
           dispatch(updateProfileData(profileList));
-          dispatch(updateIsLoadingData(false));
+          dispatch(updateLoadingData("loaded"));
           console.log(`Loading OK`);
         });
         console.log("Socket opened");
@@ -103,7 +104,7 @@ function App() {
         dispatch(updateUserAuthData(false));
         dispatch(updateMessageData([{ id: 0, message: "", date: "" }]));
         dispatch(updateProfileData([{ userUid: 0, name: "", email: "" }]));
-        dispatch(updateIsLoadingData(true));
+        dispatch(updateLoadingData("nothing to load"));
         // dispatch(updateProfileImageData(null));
 
         clearTimeout(userSessionTimeout);
