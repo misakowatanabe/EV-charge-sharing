@@ -33,71 +33,61 @@ function App() {
         // User is signed in
         dispatch(updateLoadingData("loading"));
         dispatch(updateUserAuthData(true));
-        const uid = user.uid;
-        const uidData = { uid: uid };
-        console.log(`Auth OK, user logged in ${uid}`);
 
-        try {
-          await fetch(`${ENDPOINT}/catch-user-uid`, {
-            method: "POST",
-            body: JSON.stringify(uidData),
-            headers: {
-              "Content-Type": "application/json",
-            },
-            mode: "cors",
-          }).then((res) => {
-            res.json().then((data) => {
-              // Successfully sent uid to backend
-              console.log("Successfully sent uid to backend");
+        if (auth.currentUser!.displayName) {
+          var numberPlate = user.displayName;
+          const numberPlateData = { data: numberPlate };
+          console.log(
+            `Auth OK, user logged in ${user.uid}, DN: ${numberPlate}`
+          );
+
+          try {
+            await fetch(`${ENDPOINT}/catch-user-np`, {
+              method: "POST",
+              body: JSON.stringify(numberPlateData),
+              headers: {
+                "Content-Type": "application/json",
+              },
+              mode: "cors",
+            }).then((res) => {
+              res.json().then((data) => {
+                console.log("Successfully sent uid to backend");
+              });
             });
+          } catch (error) {
+            console.log(error);
+          }
+
+          const socketProfile = io(`${ENDPOINT}`);
+          socketProfile.on("newChangesInProfile", (profileList) => {
+            dispatch(updateProfileData(profileList));
+            dispatch(updateLoadingData("loaded"));
+            console.log(`socket opened: ${socketProfile.connected}`);
+            console.log(`Loading OK`);
           });
-        } catch (error) {
-          console.log(error);
         }
-
-        // const socketTodo = io(`${ENDPOINT}`);
-        // socketTodo.on("newChangesInTodos", (todoList) => {
-        //   dispatch(updateMessageData(todoList));
-        // });
-        const socketProfile = io(`${ENDPOINT}`);
-        socketProfile.on("newChangesInProfile", (profileList) => {
-          dispatch(updateProfileData(profileList));
-          dispatch(updateLoadingData("loaded"));
-          console.log(`Loading OK`);
-        });
-        console.log("Socket opened");
-
-        //   const imagesDownloadRef = ref(storage, `profileImages/${uid}`);
-        //   getDownloadURL(imagesDownloadRef)
-        //     .then((url) => {
-        //       dispatch(updateProfileImageData(url));
-        //     })
-        //     .catch((error) => {
-        //       dispatch(updateProfileImageData(""));
-        //     })
-        //     .finally(() => {
-        //       dispatch(updateIsLoadingData(false));
-        //       console.log(`Loading OK`);
-        //     });
 
         user.getIdTokenResult().then((idTokenResult) => {
           const authTime = Number(idTokenResult.claims.auth_time) * 1000;
           const sessionDurationInMilliseconds = 60 * 60 * 1000; // 60 min
           const expirationInMilliseconds =
             sessionDurationInMilliseconds - (Date.now() - authTime);
-          userSessionTimeout = window.setTimeout(
-            () =>
+
+          userSessionTimeout = window.setTimeout(() => {
+            const socketProfile = io(`${ENDPOINT}`);
+            socketProfile.on("newChangesInProfile", function () {
+              socketProfile.disconnect();
+              console.log(`socket closed: ${socketProfile.disconnected}`);
+
               signOut(auth)
                 .then(() => {
-                  // Sign-out successful.
                   console.log("Session timeout. Sign-out successful.");
                 })
                 .catch((error) => {
-                  // An error happened.
                   console.log(`Session timeout. Sign-out failed: ${error}`);
-                }),
-            expirationInMilliseconds
-          );
+                });
+            });
+          }, expirationInMilliseconds);
         });
       } else {
         // User is signed out
@@ -105,7 +95,6 @@ function App() {
         dispatch(updateMessageData([{ id: 0, message: "", date: "" }]));
         dispatch(updateProfileData([{ userUid: 0, name: "", email: "" }]));
         dispatch(updateLoadingData("nothing to load"));
-        // dispatch(updateProfileImageData(null));
 
         clearTimeout(userSessionTimeout);
         userSessionTimeout = 0;

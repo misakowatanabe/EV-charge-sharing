@@ -13,6 +13,11 @@ import SignupEmail from "./SignupEmail";
 import SignupPassword from "./SignupPassword";
 import Button1 from "../buttons/Button1";
 import LockIcon from "../icon/LockIcon";
+import { useAppDispatch } from "../context/Hooks";
+import { updateProfileData } from "../context/slices/ProfileDataSlice";
+import { updateLoadingData } from "../context/slices/LoadingDataSlice";
+import { ENDPOINT } from "../Config";
+import { io } from "socket.io-client";
 
 export default function Signup() {
   const [name, setName] = useState("");
@@ -21,6 +26,7 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [responseData, setResponseData] = useState("");
+  const dispatch = useAppDispatch();
 
   function validateForm() {
     return name.length > 0 && email.length > 0 && password.length > 0;
@@ -28,28 +34,63 @@ export default function Signup() {
   const auth = getAuth();
   const db = getFirestore();
   const navigate = useNavigate();
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (password === confirmPassword) {
-      createUserWithEmailAndPassword(auth, email, password)
+      await createUserWithEmailAndPassword(auth, email, password)
         .then(async (userCredential) => {
-          // Signed in
+          // Signed up
           const user = userCredential.user;
           console.log(`user ${user.uid} is created`);
 
           if (auth.currentUser !== null) {
             await updateProfile(auth.currentUser, {
-              displayName: name,
-              // uid: user.uid,
-            }).catch((error) => {
-              // An error occurred
-              console.log(error);
-              navigate(`/error`);
-            });
+              displayName: numberPlate.toUpperCase(),
+            })
+              .catch((error) => {
+                console.log(error);
+                navigate(`/error`);
+              })
+              .then(() => {
+                var numberPlate = user.displayName;
+                const numberPlateData = { data: numberPlate };
+                console.log(
+                  `Auth OK, user logged in ${user.uid}, DN: ${numberPlate}`
+                );
+
+                try {
+                  fetch(`${ENDPOINT}/catch-user-np`, {
+                    method: "POST",
+                    body: JSON.stringify(numberPlateData),
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    mode: "cors",
+                  }).then((res) => {
+                    res.json().then((data) => {
+                      console.log(
+                        "In signup, Successfully sent uid to backend"
+                      );
+
+                      const socketProfile = io(`${ENDPOINT}`);
+                      socketProfile.on("newChangesInProfile", (profileList) => {
+                        dispatch(updateProfileData(profileList));
+                        dispatch(updateLoadingData("loaded"));
+                        console.log(
+                          `socket opened: ${socketProfile.connected}`
+                        );
+                        console.log(`Loading OK`);
+                      });
+                    });
+                  });
+                } catch (error) {
+                  console.log(error);
+                }
+              });
           }
 
           try {
-            await setDoc(doc(db, user.uid, "userInfo"), {
+            await setDoc(doc(db, numberPlate.toUpperCase(), "userInfo"), {
               userUid: user.uid,
               name: name,
               numberPlate: numberPlate.toUpperCase(),

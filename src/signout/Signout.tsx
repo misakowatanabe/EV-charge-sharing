@@ -1,33 +1,25 @@
-import { useDispatch } from "react-redux";
-// import { updateSnackbar } from "../context/slices/SnackbarSlice";
 import { getAuth, signOut } from "firebase/auth";
 import Button from "@mui/material/Button";
+import { io } from "socket.io-client";
+import { ENDPOINT } from "../Config";
 
 export default function Signout() {
   const auth = getAuth();
-  const dispatch = useDispatch();
+
   const handleSignOut = () => {
-    signOut(auth)
-      .then(() => {
-        // Sign-out successful.
-        // dispatch(
-        //   updateSnackbar({
-        //     value: true,
-        //     message: "Sign out successful!",
-        //     severity: "success",
-        //   })
-        // );
-      })
-      .catch((error) => {
-        // An error happened.
-        // dispatch(
-        //   updateSnackbar({
-        //     value: true,
-        //     message: "Something went wrong with sign out",
-        //     severity: "error",
-        //   })
-        // );
-      });
+    const socketProfile = io(`${ENDPOINT}`);
+    socketProfile.on("newChangesInProfile", function () {
+      socketProfile.disconnect();
+      console.log(`socket closed: ${socketProfile.disconnected}`);
+
+      signOut(auth)
+        .then(() => {
+          console.log("signout done");
+        })
+        .catch((error) => {
+          console.log("signout failed");
+        });
+    });
   };
 
   return (
