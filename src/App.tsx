@@ -51,7 +51,7 @@ function App() {
               mode: "cors",
             }).then((res) => {
               res.json().then((data) => {
-                console.log("Successfully sent uid to backend");
+                console.log("Successfully sent np to backend");
               });
             });
           } catch (error) {

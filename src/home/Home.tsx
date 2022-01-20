@@ -4,18 +4,38 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
+import { ENDPOINT } from "../Config";
 
 export default function Home() {
   const [number, setNumber] = useState("");
   const [responseData, setResponseData] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (number !== "") {
-      console.log(number.toUpperCase());
+      const numberPlateForSearch = { data: number.toUpperCase() };
+      try {
+        await fetch(`${ENDPOINT}/search`, {
+          method: "POST",
+          body: JSON.stringify(numberPlateForSearch),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "cors",
+        }).then((res) => {
+          res.json().then((data) => {
+            setResponseData(data.message);
+          });
+        });
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setNumber("");
+      }
     } else {
-      setResponseData("Please fill out this field");
+      setErrorMessage("Please fill out this field");
       setError(true);
     }
   };
@@ -53,13 +73,17 @@ export default function Home() {
               onChange={(e) => {
                 setNumber(e.target.value);
                 setError(false);
+                setErrorMessage("");
                 setResponseData("");
               }}
               error={error}
-              helperText={responseData}
+              helperText={errorMessage}
             />
           </div>
         </form>
+        <div style={{ textAlign: "center", fontSize: "20px" }}>
+          {responseData}
+        </div>
       </Box>
     </div>
   );

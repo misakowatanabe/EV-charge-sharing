@@ -69,7 +69,7 @@ export default function Signup() {
                   }).then((res) => {
                     res.json().then((data) => {
                       console.log(
-                        "In signup, Successfully sent uid to backend"
+                        "In signup, Successfully sent np to backend"
                       );
 
                       const socketProfile = io(`${ENDPOINT}`);
