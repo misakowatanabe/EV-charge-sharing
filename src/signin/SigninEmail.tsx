@@ -14,6 +14,11 @@ export default function SigninEmail({ email, setEmail }: signinEmailProps) {
         <TextField
           autoFocus
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="email"
           style={{ width: "100%" }}
           value={email}

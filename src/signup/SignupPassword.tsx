@@ -30,6 +30,11 @@ export default function SignupPassword({
       <div className="textfield">
         <TextField
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="password"
           type={passwordShown ? "text" : "password"}
           style={{ width: "100%" }}
@@ -47,6 +52,11 @@ export default function SignupPassword({
       <div className="textfield">
         <TextField
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="confirmPassword"
           type={confirmPasswordShown ? "text" : "password"}
           style={{ width: "100%" }}

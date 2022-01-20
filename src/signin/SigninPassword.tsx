@@ -25,6 +25,11 @@ export default function SigninPassword({
       <div className="textfield">
         <TextField
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="password"
           type={passwordShown ? "text" : "password"}
           style={{ width: "100%" }}

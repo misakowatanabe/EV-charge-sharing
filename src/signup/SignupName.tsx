@@ -14,6 +14,11 @@ export default function SignupName({ name, setName }: signupNameProps) {
         <TextField
           autoFocus
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="name"
           style={{ width: "100%" }}
           value={name}

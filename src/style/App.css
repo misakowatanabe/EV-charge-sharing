@@ -10,7 +10,6 @@ a:-webkit-any-link {
 }
 
 .textfield {
-  background-color: #ffffff;
   width: 100%;
   margin-bottom: 20px;
 }
@@ -24,13 +23,17 @@ a:-webkit-any-link {
 
 /* paper start */
 
-.preview-edit-delete-button {
+.serach-button {
   color: #838383 !important;
+  background-color: transparent !important;
   min-width: 0px !important;
   padding: 5px !important;
-  border-radius: 19px !important;
   transition: 250ms !important;
-  position: absolute !important;
+}
+
+.serach-button :hover {
+  color: #0c0c0c !important;
+  background-color: transparent !important;
 }
 
 .todo-title {

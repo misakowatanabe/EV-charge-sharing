@@ -16,6 +16,11 @@ export default function SignupNumberPlate({
       <div className="textfield">
         <TextField
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="name"
           style={{ width: "100%" }}
           value={numberPlate}

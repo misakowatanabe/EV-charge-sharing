@@ -13,6 +13,11 @@ export default function SignupEmail({ email, setEmail }: signupEmailProps) {
       <div className="textfield">
         <TextField
           variant="outlined"
+          InputProps={{
+            style: {
+              backgroundColor: "#ffffff",
+            },
+          }}
           name="email"
           style={{ width: "100%" }}
           value={email}
