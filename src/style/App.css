@@ -23,7 +23,7 @@ a:-webkit-any-link {
 
 /* paper start */
 
-.serach-button {
+.search-button {
   color: #838383 !important;
   background-color: transparent !important;
   min-width: 0px !important;
@@ -31,7 +31,7 @@ a:-webkit-any-link {
   transition: 250ms !important;
 }
 
-.serach-button :hover {
+.search-button :hover {
   color: #0c0c0c !important;
   background-color: transparent !important;
 }

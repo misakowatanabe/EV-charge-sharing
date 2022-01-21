@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Messages from "./Messages";
 import { Box } from "@mui/system";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -54,14 +55,14 @@ export default function Home() {
           <div className="textfield">
             <TextField
               variant="outlined"
-              placeholder="Search licence number"
+              placeholder="Search licence number. e.g. AAA111"
               InputProps={{
                 style: {
                   backgroundColor: "#ffffff",
                 },
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Button type="submit" className="serach-button">
+                    <Button type="submit" className="search-button">
                       <SearchIcon />
                     </Button>
                   </InputAdornment>
@@ -77,13 +78,14 @@ export default function Home() {
                 setResponseData("");
               }}
               error={error}
-              helperText={errorMessage}
+              helperText={errorMessage ? errorMessage : " "}
             />
           </div>
         </form>
         <div style={{ textAlign: "center", fontSize: "20px" }}>
           {responseData}
         </div>
+        <Messages />
       </Box>
     </div>
   );
