@@ -26,12 +26,13 @@ export default function Result({
 }: resultProps) {
   const auth = getAuth();
   var userNP = auth.currentUser!.displayName!;
+
   const handleCancel = () => {
     setOpen(false);
     setNumber("");
   };
 
-  const handleSendMessage = () => {
+  const handleCreateChat = () => {
     setOpen(false);
     setNumber("");
   };
@@ -40,7 +41,7 @@ export default function Result({
   if (responseData.includes("was found")) {
     button = (
       <NavLink to={`/chat/${userNP}/${matchedNP}`}>
-        <SendMessageButton onClick={handleSendMessage}>
+        <SendMessageButton onClick={handleCreateChat}>
           Send Message
         </SendMessageButton>
       </NavLink>

@@ -30,7 +30,7 @@ export default function Messages() {
     setChecked(newChecked);
   };
 
-  const handleItem = (chatId: string) => {
+  const handleEnterChat = (chatId: string) => {
     navigate(`/chat/${auth.currentUser!.displayName}/${chatId}`);
   };
 
@@ -98,7 +98,7 @@ export default function Messages() {
                       <div>{createdAt}</div>
                     </div>
                   }
-                  onClick={() => handleItem(chat.chatId)}
+                  onClick={() => handleEnterChat(chat.chatId)}
                   style={{ padding: "15px 0px", margin: "0px" }}
                 />
               </ListItemButton>
