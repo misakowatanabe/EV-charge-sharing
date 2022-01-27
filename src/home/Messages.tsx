@@ -1,5 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import { useAppSelector } from "../context/Hooks";
+import { selectMessageData } from "../context/slices/MessageDataSlice";
 import Inbox from "./Inbox";
+import DeleteChatAlert from "./DeleteChatAlert";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -7,69 +12,101 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import Checkbox from "@mui/material/Checkbox";
 
 export default function Messages() {
-  const items = [
-    { id: 1, message: "List 1", time: "00:00" },
-    { id: 2, message: "List 2", time: "01:00" },
-    { id: 3, message: "List 3", time: "02:00" },
-  ];
+  const chats = useAppSelector(selectMessageData);
+  const auth = getAuth();
+  const navigate = useNavigate();
 
-  const [checked, setChecked] = useState([0]);
-  console.log(checked);
+  const [checked, setChecked] = useState<string[]>([]);
 
-  const handleToggle = (id: number) => () => {
-    const currentIndex = checked.indexOf(id);
+  const handleToggle = (chatId: string) => () => {
+    const currentIndex = checked.indexOf(chatId);
     const newChecked = [...checked];
 
     if (currentIndex === -1) {
-      newChecked.push(id);
+      newChecked.push(chatId);
     } else {
       newChecked.splice(currentIndex, 1);
     }
     setChecked(newChecked);
   };
 
-  const handleItem = () => {
-    console.log("clicked");
+  const handleItem = (chatId: string) => {
+    navigate(`/chat/${auth.currentUser!.displayName}/${chatId}`);
   };
 
-  return (
-    <Inbox>
-      {items.map((item) => {
-        const labelId = `checkbox-list-label-${item.id}`;
+  if (chats.length === 0) {
+    return (
+      <Inbox>
+        <ListItem disablePadding>
+          <ListItemButton
+            role={undefined}
+            dense
+            style={{ paddingTop: "0px", paddingBottom: "0px" }}
+          >
+            <ListItemIcon>
+              <Checkbox edge="start" tabIndex={-1} disableRipple />
+            </ListItemIcon>
+            <ListItemText
+              primary={<div>No chats</div>}
+              style={{ padding: "15px 0px", margin: "0px" }}
+            />
+          </ListItemButton>
+        </ListItem>
+      </Inbox>
+    );
+  }
 
-        return (
-          <ListItem key={item.id} disablePadding>
-            <ListItemButton
-              role={undefined}
-              dense
-              style={{ paddingTop: "0px", paddingBottom: "0px" }}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  onClick={handleToggle(item.id)}
-                  edge="start"
-                  checked={checked.indexOf(item.id) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ "aria-labelledby": labelId }}
+  return (
+    <div>
+      <Inbox>
+        {chats.map((chat) => {
+          const labelId = `checkbox-list-label-${chat.chatId}`;
+
+          var createdAt;
+          if (chat.createdAt) {
+            createdAt = new Date(chat.createdAt).toLocaleString("en-GB", {
+              hour12: false,
+            });
+          }
+
+          return (
+            <ListItem key={chat.chatId} disablePadding>
+              <ListItemButton
+                role={undefined}
+                dense
+                style={{ paddingTop: "0px", paddingBottom: "0px" }}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    onClick={handleToggle(chat.chatId)}
+                    edge="start"
+                    checked={checked.indexOf(chat.chatId) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{ "aria-labelledby": labelId }}
+                  />
+                </ListItemIcon>
+                <ListItemText
+                  primary={
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      <div>{chat.chatId}</div>
+                      <div>{createdAt}</div>
+                    </div>
+                  }
+                  onClick={() => handleItem(chat.chatId)}
+                  style={{ padding: "15px 0px", margin: "0px" }}
                 />
-              </ListItemIcon>
-              <ListItemText
-                primary={
-                  <div
-                    style={{ display: "flex", justifyContent: "space-between" }}
-                  >
-                    <div>{item.message}</div>
-                    <div>{item.time}</div>
-                  </div>
-                }
-                onClick={handleItem}
-                style={{ padding: "15px 0px", margin: "0px" }}
-              />
-            </ListItemButton>
-          </ListItem>
-        );
-      })}
-    </Inbox>
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
+      </Inbox>
+      <DeleteChatAlert checked={checked} setChecked={setChecked} />
+    </div>
   );
 }

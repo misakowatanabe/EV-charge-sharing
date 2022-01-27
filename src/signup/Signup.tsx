@@ -15,6 +15,7 @@ import Button1 from "../buttons/Button1";
 import LockIcon from "../icon/LockIcon";
 import { useAppDispatch } from "../context/Hooks";
 import { updateProfileData } from "../context/slices/ProfileDataSlice";
+import { updateMessageData } from "../context/slices/MessageDataSlice";
 import { updateLoadingData } from "../context/slices/LoadingDataSlice";
 import { ENDPOINT } from "../Config";
 import { io } from "socket.io-client";
@@ -49,7 +50,7 @@ export default function Signup() {
             })
               .catch((error) => {
                 console.log(error);
-                navigate(`/error`);
+                navigate("/error");
               })
               .then(() => {
                 var numberPlate = user.displayName;
@@ -68,9 +69,7 @@ export default function Signup() {
                     mode: "cors",
                   }).then((res) => {
                     res.json().then((data) => {
-                      console.log(
-                        "In signup, Successfully sent np to backend"
-                      );
+                      console.log("In signup, Successfully sent np to backend");
 
                       const socketProfile = io(`${ENDPOINT}`);
                       socketProfile.on("newChangesInProfile", (profileList) => {
@@ -80,6 +79,14 @@ export default function Signup() {
                           `socket opened: ${socketProfile.connected}`
                         );
                         console.log(`Loading OK`);
+
+                        const socketMessages = io(`${ENDPOINT}`);
+                        socketMessages.on(
+                          "newChangesInMessages",
+                          (messageList) => {
+                            dispatch(updateMessageData(messageList));
+                          }
+                        );
                       });
                     });
                   });

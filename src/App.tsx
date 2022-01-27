@@ -15,6 +15,7 @@ import PrivateRoute from "./route/PrivateRoute";
 import Signup from "./signup/Signup";
 import Signin from "./signin/Signin";
 import Home from "./home/Home";
+import Chat from "./chat/Chat";
 import Account from "./account/Account";
 import Setting from "./setting/Setting";
 import NotFound from "./error/NotFound";
@@ -65,6 +66,16 @@ function App() {
             console.log(`socket opened: ${socketProfile.connected}`);
             console.log(`Loading OK`);
           });
+
+          const socketMessages = io(`${ENDPOINT}`);
+          socketMessages.on("newChangesInMessages", (messageList) => {
+            dispatch(updateMessageData(messageList));
+            console.log(messageList);
+            // dispatch(updateProfileData(profileList));
+            // dispatch(updateLoadingData("loaded"));
+            // console.log(`socket opened: ${socketMessages.connected}`);
+            // console.log(`Loading OK`);
+          });
         }
 
         user.getIdTokenResult().then((idTokenResult) => {
@@ -92,7 +103,7 @@ function App() {
       } else {
         // User is signed out
         dispatch(updateUserAuthData(false));
-        dispatch(updateMessageData([{ id: 0, message: "", date: "" }]));
+        dispatch(updateMessageData([]));
         dispatch(updateProfileData([{ userUid: 0, name: "", email: "" }]));
         dispatch(updateLoadingData("nothing to load"));
 
@@ -113,6 +124,7 @@ function App() {
           </Route>
           <Route element={<PrivateRoute />}>
             <Route path="/" element={<Home />} />
+            <Route path="chat/:userNP/:matchedNP" element={<Chat />} />
             <Route path="account" element={<Account />} />
             <Route path="setting" element={<Setting />} />
           </Route>

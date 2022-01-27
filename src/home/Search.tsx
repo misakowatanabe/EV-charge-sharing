@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getAuth } from "firebase/auth";
 import Result from "./Result";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
@@ -13,9 +14,17 @@ export default function Search() {
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const auth = getAuth();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (number !== "") {
+    if (number === "") {
+      setErrorMessage("Please fill out this field");
+      setError(true);
+    } else if (number.toUpperCase() === auth.currentUser!.displayName) {
+      setErrorMessage("Oops, that's yours");
+      setError(true);
+    } else {
       const numberPlateForSearch = { data: number.toUpperCase() };
       try {
         await fetch(`${ENDPOINT}/search`, {
@@ -33,12 +42,8 @@ export default function Search() {
       } catch (error) {
         console.log(error);
       } finally {
-        setNumber("");
         setOpen(true);
       }
-    } else {
-      setErrorMessage("Please fill out this field");
-      setError(true);
     }
   };
 
@@ -75,7 +80,13 @@ export default function Search() {
           />
         </div>
       </form>
-      <Result setOpen={setOpen} open={open} responseData={responseData} />
+      <Result
+        setOpen={setOpen}
+        open={open}
+        responseData={responseData}
+        setNumber={setNumber}
+        matchedNP={number.toUpperCase()}
+      />
     </div>
   );
 }

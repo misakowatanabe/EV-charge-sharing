@@ -3,14 +3,14 @@ import type { RootState } from "../Store";
 
 interface MessageDataState {
   value: {
-    id: number;
-    message: string;
-    date: string;
+    chatId: string;
+    messages: { content: string; createdAt: number; messageId: string }[];
+    createdAt: number;
   }[];
 }
 
 const initialState: MessageDataState = {
-  value: [{ id: 0, message: "", date: "" }],
+  value: [],
 };
 
 export const messageDataSlice = createSlice({

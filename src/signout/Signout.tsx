@@ -7,10 +7,16 @@ export default function Signout() {
   const auth = getAuth();
 
   const handleSignOut = () => {
+    const socketMessages = io(`${ENDPOINT}`);
+    socketMessages.on("newChangesInMessages", function () {
+      socketMessages.disconnect();
+      console.log(`message socket closed: ${socketMessages.disconnected}`);
+    });
+
     const socketProfile = io(`${ENDPOINT}`);
     socketProfile.on("newChangesInProfile", function () {
       socketProfile.disconnect();
-      console.log(`socket closed: ${socketProfile.disconnected}`);
+      console.log(`profile socket closed: ${socketProfile.disconnected}`);
 
       signOut(auth)
         .then(() => {

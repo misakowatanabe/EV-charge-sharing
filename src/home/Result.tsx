@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
+import { NavLink } from "react-router-dom";
+import { getAuth } from "firebase/auth";
 import SendMessageButton from "../buttons/SendMessageButton";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -11,23 +13,37 @@ type resultProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
   open: boolean;
   responseData: string;
+  setNumber: Dispatch<SetStateAction<string>>;
+  matchedNP: string;
 };
 
-export default function Result({ setOpen, open, responseData }: resultProps) {
+export default function Result({
+  setOpen,
+  open,
+  responseData,
+  setNumber,
+  matchedNP,
+}: resultProps) {
+  const auth = getAuth();
+  var userNP = auth.currentUser!.displayName!;
   const handleCancel = () => {
     setOpen(false);
+    setNumber("");
   };
 
   const handleSendMessage = () => {
     setOpen(false);
+    setNumber("");
   };
 
   var button;
   if (responseData.includes("was found")) {
     button = (
-      <SendMessageButton onClick={handleSendMessage}>
-        Send Message
-      </SendMessageButton>
+      <NavLink to={`/chat/${userNP}/${matchedNP}`}>
+        <SendMessageButton onClick={handleSendMessage}>
+          Send Message
+        </SendMessageButton>
+      </NavLink>
     );
   }
 
