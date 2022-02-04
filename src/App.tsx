@@ -89,7 +89,10 @@ function App() {
               .catch((error) => {
                 console.log(`Session timeout. Sign-out failed: ${error}`);
               });
-            window.location.reload();
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 50);
           }, expirationInMilliseconds);
         });
       } else {
