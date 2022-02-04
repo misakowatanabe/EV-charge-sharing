@@ -3,10 +3,14 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../context/Hooks";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
 import SendMessageButton from "../buttons/SendMessageButton";
+import TopBar from "./TopBar";
+import BottomBar from "./BottomBar";
+import ChatCreatedAt from "./ChatCreatedAt";
+import Message from "./Message";
 import { nanoid } from "nanoid";
 import { ENDPOINT } from "../Config";
 import TextField from "@mui/material/TextField";
-import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
 
 export default function Chat() {
   let { userNP } = useParams();
@@ -22,18 +26,17 @@ export default function Chat() {
   >([]);
 
   useEffect(() => {
-    const test2 = async () => {
-      const findChatWithMatchedNP = allChatsRelatedToUser.find(
+    const findChat = async () => {
+      const foundChatWithMatchedNP = allChatsRelatedToUser.find(
         (chat) => chat.chatId === matchedNP
       );
-      return await Promise.resolve(findChatWithMatchedNP);
+      return await Promise.resolve(foundChatWithMatchedNP);
     };
 
-    test2().then((findChatWithMatchedNP) => {
-      console.log(findChatWithMatchedNP);
-      if (findChatWithMatchedNP !== undefined) {
+    findChat().then((foundChatWithMatchedNP) => {
+      if (foundChatWithMatchedNP !== undefined) {
         var createdAt = new Date(
-          findChatWithMatchedNP!.createdAt!
+          foundChatWithMatchedNP!.createdAt!
         ).toLocaleString("en-GB", {
           hour12: false,
         });
@@ -41,32 +44,31 @@ export default function Chat() {
       }
     });
 
-    const test = async () => {
+    const filterChat = async () => {
       const chatWithMatchedNP = allChatsRelatedToUser.filter(
         (chat) => chat.chatId === matchedNP
       );
       return await Promise.resolve(chatWithMatchedNP);
     };
 
-    test().then((chatWithMatchedNP) => {
-      console.log(chatWithMatchedNP);
+    filterChat().then((chatWithMatchedNP) => {
       if (chatWithMatchedNP) {
         const messagesContents = chatWithMatchedNP.map((messagesData) =>
           messagesData.messages.map((message) => {
+            const createdAt = new Date(message!.createdAt!).toLocaleString(
+              "en-GB",
+              {
+                hour12: false,
+              }
+            );
             return (
               <div key={message.createdAt}>
-                <Paper
-                  sx={{
-                    margin: { xs: "10px 0px", sm: "10px 0px" },
-                    padding: "10px 20px",
-                    height: "auto",
-                    width: { xs: "100%", sm: "350px" },
-                    minWidth: { sm: "292px" },
-                    position: "relative",
-                  }}
-                >
-                  {message.content}
-                </Paper>
+                <Message
+                  createdAt={createdAt}
+                  messageWrittenBy={message.writtenBy}
+                  userNP={userNP}
+                  messageContent={message.content}
+                />
               </div>
             );
           })
@@ -74,7 +76,7 @@ export default function Chat() {
         setMessagesWithMatchedUser(messagesContents);
       }
     });
-  }, [allChatsRelatedToUser, matchedNP]);
+  }, [allChatsRelatedToUser, matchedNP, userNP]);
 
   const [messageLetters, setMessageLetters] = useState("");
   const messageData = {
@@ -103,7 +105,6 @@ export default function Chat() {
       }).then((res) => {
         res.json().then((res) => {
           if (res.message === 200) {
-            console.log("200");
           } else if (res.message === 500) {
             navigate("/error");
           }
@@ -115,36 +116,53 @@ export default function Chat() {
   };
 
   return (
-    <div>
-      <div>Chat</div>
-      <div>{userNP}</div>
-      <div>{matchedNP}</div>
+    <div style={{ marginBottom: "80px" }}>
+      <TopBar>Chatting with {matchedNP}</TopBar>
       {chatCreatedAt && (
-        <div style={{ textAlign: "center", fontSize: "0.875rem" }}>
-          Created at {chatCreatedAt}
-        </div>
+        <ChatCreatedAt>Created at {chatCreatedAt}</ChatCreatedAt>
       )}
       <div>{messagesWithMatchedUser}</div>
-      <form noValidate autoComplete="off" onSubmit={handleMessageSubmit}>
-        <div className="textfield-body">
-          <TextField
-            placeholder="Type here ..."
-            variant="outlined"
-            InputProps={{
-              style: {
-                backgroundColor: "#ffffff",
-              },
-            }}
-            multiline
-            rows={4}
-            name="letter"
-            style={{ width: "100%" }}
-            value={messageLetters || ""}
-            onChange={(e) => setMessageLetters(e.target.value)}
-          />
-          <SendMessageButton disabled={!validateForm()}>Send</SendMessageButton>
-        </div>
-      </form>
+      <BottomBar>
+        <form noValidate autoComplete="off" onSubmit={handleMessageSubmit}>
+          <div
+            className="textfield-body"
+            style={{ margin: "10px 0px 10px 0px" }}
+          >
+            <Grid
+              container
+              sx={{
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              <Grid item xs>
+                <TextField
+                  placeholder="Type message"
+                  variant="outlined"
+                  size="small"
+                  InputProps={{
+                    style: {
+                      backgroundColor: "#ffffff",
+                      borderRadius: "10px",
+                    },
+                  }}
+                  multiline
+                  rows={2}
+                  name="letter"
+                  style={{ width: "100%" }}
+                  value={messageLetters || ""}
+                  onChange={(e) => setMessageLetters(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs="auto" style={{ marginLeft: "15px" }}>
+                <SendMessageButton disabled={!validateForm()}>
+                  Send
+                </SendMessageButton>
+              </Grid>
+            </Grid>
+          </div>
+        </form>
+      </BottomBar>
     </div>
   );
 }

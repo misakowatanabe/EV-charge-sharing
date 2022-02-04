@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { NavLink } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-import SendMessageButton from "../buttons/SendMessageButton";
+import CreateChatButton from "../buttons/CreateChatButton";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -41,9 +41,9 @@ export default function Result({
   if (responseData.includes("was found")) {
     button = (
       <NavLink to={`/chat/${userNP}/${matchedNP}`}>
-        <SendMessageButton onClick={handleCreateChat}>
+        <CreateChatButton onClick={handleCreateChat}>
           Send Message
-        </SendMessageButton>
+        </CreateChatButton>
       </NavLink>
     );
   }
