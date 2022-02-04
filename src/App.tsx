@@ -28,7 +28,10 @@ function App() {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      const socket = io(`${ENDPOINT}`);
       let userSessionTimeout = 0;
+      console.log(auth.currentUser);
+      console.log(user);
 
       if (user) {
         // User is signed in
@@ -52,29 +55,23 @@ function App() {
               mode: "cors",
             }).then((res) => {
               res.json().then((data) => {
-                console.log("Successfully sent np to backend");
+                console.log(`sent np to backend: ${data.message}`);
               });
             });
           } catch (error) {
             console.log(error);
           }
 
-          const socketProfile = io(`${ENDPOINT}`);
-          socketProfile.on("newChangesInProfile", (profileList) => {
+          socket.on("newChangesInProfile", (profileList) => {
             dispatch(updateProfileData(profileList));
             dispatch(updateLoadingData("loaded"));
-            console.log(`socket opened: ${socketProfile.connected}`);
+            console.log(`socket opened: ${socket.connected}`);
             console.log(`Loading OK`);
           });
 
-          const socketMessages = io(`${ENDPOINT}`);
-          socketMessages.on("newChangesInMessages", (messageList) => {
+          socket.on("newChangesInMessages", (messageList) => {
             dispatch(updateMessageData(messageList));
             console.log(messageList);
-            // dispatch(updateProfileData(profileList));
-            // dispatch(updateLoadingData("loaded"));
-            // console.log(`socket opened: ${socketMessages.connected}`);
-            // console.log(`Loading OK`);
           });
         }
 
@@ -85,23 +82,19 @@ function App() {
             sessionDurationInMilliseconds - (Date.now() - authTime);
 
           userSessionTimeout = window.setTimeout(() => {
-            const socketProfile = io(`${ENDPOINT}`);
-            socketProfile.on("newChangesInProfile", function () {
-              socketProfile.disconnect();
-              console.log(`socket closed: ${socketProfile.disconnected}`);
-
-              signOut(auth)
-                .then(() => {
-                  console.log("Session timeout. Sign-out successful.");
-                })
-                .catch((error) => {
-                  console.log(`Session timeout. Sign-out failed: ${error}`);
-                });
-            });
+            signOut(auth)
+              .then(() => {
+                console.log("Session timeout. Sign-out successful.");
+              })
+              .catch((error) => {
+                console.log(`Session timeout. Sign-out failed: ${error}`);
+              });
+            window.location.reload();
           }, expirationInMilliseconds);
         });
       } else {
         // User is signed out
+        socket.disconnect();
         dispatch(updateUserAuthData(false));
         dispatch(updateMessageData([]));
         dispatch(updateProfileData([{ userUid: 0, name: "", email: "" }]));
@@ -111,7 +104,9 @@ function App() {
         userSessionTimeout = 0;
       }
     });
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+    };
   }, [auth, dispatch]);
 
   return (

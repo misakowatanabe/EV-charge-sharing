@@ -22,44 +22,58 @@ export default function Chat() {
   >([]);
 
   useEffect(() => {
-    if (allChatsRelatedToUser[0]) {
-      const chatWithMatchedNP = allChatsRelatedToUser.find(
+    const test2 = async () => {
+      const findChatWithMatchedNP = allChatsRelatedToUser.find(
         (chat) => chat.chatId === matchedNP
       );
-      var createdAt = new Date(chatWithMatchedNP!.createdAt).toLocaleString(
-        "en-GB",
-        {
+      return await Promise.resolve(findChatWithMatchedNP);
+    };
+
+    test2().then((findChatWithMatchedNP) => {
+      console.log(findChatWithMatchedNP);
+      if (findChatWithMatchedNP !== undefined) {
+        var createdAt = new Date(
+          findChatWithMatchedNP!.createdAt!
+        ).toLocaleString("en-GB", {
           hour12: false,
-        }
+        });
+        setChatCreatedAt(createdAt);
+      }
+    });
+
+    const test = async () => {
+      const chatWithMatchedNP = allChatsRelatedToUser.filter(
+        (chat) => chat.chatId === matchedNP
       );
-      setChatCreatedAt(createdAt);
-    }
+      return await Promise.resolve(chatWithMatchedNP);
+    };
 
-    const chatWithMatchedNP = allChatsRelatedToUser.filter(
-      (chat) => chat.chatId === matchedNP
-    );
-
-    const messagesContents = chatWithMatchedNP.map((messagesData) =>
-      messagesData.messages.map((message) => {
-        return (
-          <div key={message.createdAt}>
-            <Paper
-              sx={{
-                margin: { xs: "10px 0px", sm: "10px 0px" },
-                padding: "10px 20px",
-                height: "auto",
-                width: { xs: "100%", sm: "350px" },
-                minWidth: { sm: "292px" },
-                position: "relative",
-              }}
-            >
-              {message.content}
-            </Paper>
-          </div>
+    test().then((chatWithMatchedNP) => {
+      console.log(chatWithMatchedNP);
+      if (chatWithMatchedNP) {
+        const messagesContents = chatWithMatchedNP.map((messagesData) =>
+          messagesData.messages.map((message) => {
+            return (
+              <div key={message.createdAt}>
+                <Paper
+                  sx={{
+                    margin: { xs: "10px 0px", sm: "10px 0px" },
+                    padding: "10px 20px",
+                    height: "auto",
+                    width: { xs: "100%", sm: "350px" },
+                    minWidth: { sm: "292px" },
+                    position: "relative",
+                  }}
+                >
+                  {message.content}
+                </Paper>
+              </div>
+            );
+          })
         );
-      })
-    );
-    setMessagesWithMatchedUser(messagesContents);
+        setMessagesWithMatchedUser(messagesContents);
+      }
+    });
   }, [allChatsRelatedToUser, matchedNP]);
 
   const [messageLetters, setMessageLetters] = useState("");
@@ -89,6 +103,7 @@ export default function Chat() {
       }).then((res) => {
         res.json().then((res) => {
           if (res.message === 200) {
+            console.log("200");
           } else if (res.message === 500) {
             navigate("/error");
           }
@@ -104,9 +119,11 @@ export default function Chat() {
       <div>Chat</div>
       <div>{userNP}</div>
       <div>{matchedNP}</div>
-      <div style={{ textAlign: "center", fontSize: "0.875rem" }}>
-        Created at {chatCreatedAt}
-      </div>
+      {chatCreatedAt && (
+        <div style={{ textAlign: "center", fontSize: "0.875rem" }}>
+          Created at {chatCreatedAt}
+        </div>
+      )}
       <div>{messagesWithMatchedUser}</div>
       <form noValidate autoComplete="off" onSubmit={handleMessageSubmit}>
         <div className="textfield-body">

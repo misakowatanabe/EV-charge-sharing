@@ -4,8 +4,9 @@ import type { RootState } from "../Store";
 interface MessageDataState {
   value: {
     chatId: string;
-    messages: { content: string; createdAt: number; messageId: string }[];
+    messages: { content?: string; createdAt?: number; messageId?: string }[];
     createdAt: number;
+    writtenBy: string;
   }[];
 }
 

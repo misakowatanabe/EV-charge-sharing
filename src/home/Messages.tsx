@@ -75,6 +75,7 @@ export default function Messages() {
                 role={undefined}
                 dense
                 style={{ paddingTop: "0px", paddingBottom: "0px" }}
+                selected={checked.indexOf(chat.chatId) !== -1}
               >
                 <ListItemIcon>
                   <Checkbox
