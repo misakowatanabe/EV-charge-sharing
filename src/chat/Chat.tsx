@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../context/Hooks";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
@@ -24,6 +24,20 @@ export default function Chat() {
   const [messagesWithMatchedUser, setMessagesWithMatchedUser] = useState<
     JSX.Element[][]
   >([]);
+
+  const [initialLoadingEnd, setInitialLoadingEnd] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () => {
+    if (null !== messagesEndRef.current) {
+      if (initialLoadingEnd) {
+        messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      } else {
+        messagesEndRef.current.scrollIntoView();
+      }
+      setInitialLoadingEnd(true);
+    }
+  };
+  useEffect(scrollToBottom, [messagesWithMatchedUser, initialLoadingEnd]);
 
   useEffect(() => {
     const findChat = async () => {
@@ -69,6 +83,7 @@ export default function Chat() {
                   userNP={userNP}
                   messageContent={message.content}
                 />
+                <div ref={messagesEndRef} />
               </div>
             );
           })
