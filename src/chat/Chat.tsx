@@ -11,6 +11,7 @@ import { nanoid } from "nanoid";
 import { ENDPOINT } from "../Config";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
+import { format } from "date-fns";
 
 export default function Chat() {
   let { userNP } = useParams();
@@ -39,6 +40,22 @@ export default function Chat() {
   };
   useEffect(scrollToBottom, [messagesWithMatchedUser, initialLoadingEnd]);
 
+  const getFormattedDate = (createdAt: number) => {
+    const epocAWeekAgo = Date.now() - 604800000;
+    const epocADayAgo = Date.now() - 86400000;
+    var formatedCreatedAt;
+    if (createdAt <= epocAWeekAgo) {
+      formatedCreatedAt = format(new Date(createdAt), "MMMM do H:mma");
+    } else {
+      if (createdAt <= epocADayAgo) {
+        formatedCreatedAt = format(new Date(createdAt), "eeee H:mma");
+      } else {
+        formatedCreatedAt = format(new Date(createdAt), "'Today' H:mma");
+      }
+    }
+    return formatedCreatedAt;
+  };
+
   useEffect(() => {
     const findChat = async () => {
       const foundChatWithMatchedNP = allChatsRelatedToUser.find(
@@ -49,11 +66,7 @@ export default function Chat() {
 
     findChat().then((foundChatWithMatchedNP) => {
       if (foundChatWithMatchedNP !== undefined) {
-        var createdAt = new Date(
-          foundChatWithMatchedNP!.createdAt!
-        ).toLocaleString("en-GB", {
-          hour12: false,
-        });
+        const createdAt = getFormattedDate(foundChatWithMatchedNP!.createdAt!);
         setChatCreatedAt(createdAt);
       }
     });
@@ -69,16 +82,10 @@ export default function Chat() {
       if (chatWithMatchedNP) {
         const messagesContents = chatWithMatchedNP.map((messagesData) =>
           messagesData.messages.map((message) => {
-            const createdAt = new Date(message!.createdAt!).toLocaleString(
-              "en-GB",
-              {
-                hour12: false,
-              }
-            );
             return (
               <div key={message.createdAt}>
                 <Message
-                  createdAt={createdAt}
+                  createdAt={getFormattedDate(message!.createdAt!)}
                   messageWrittenBy={message.writtenBy}
                   userNP={userNP}
                   messageContent={message.content}
@@ -134,7 +141,7 @@ export default function Chat() {
     <div style={{ marginBottom: "80px" }}>
       <TopBar>Chatting with {matchedNP}</TopBar>
       {chatCreatedAt && (
-        <ChatCreatedAt>Created at {chatCreatedAt}</ChatCreatedAt>
+        <ChatCreatedAt>Chat created: {chatCreatedAt}</ChatCreatedAt>
       )}
       <div>{messagesWithMatchedUser}</div>
       <BottomBar>
