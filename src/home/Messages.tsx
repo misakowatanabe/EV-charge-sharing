@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { useAppSelector } from "../context/Hooks";
@@ -69,8 +69,8 @@ export default function Messages() {
           const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
 
           return (
-            <>
-              <ListItem key={chat.chatId} disablePadding>
+            <Fragment key={chat.chatId}>
+              <ListItem disablePadding>
                 <ListItemButton
                   role={undefined}
                   dense
@@ -109,9 +109,9 @@ export default function Messages() {
                 </ListItemButton>
               </ListItem>
               {index !== chats.length - 1 && (
-                <Divider key={index} variant="middle" component="li" />
+                <Divider variant="middle" component="li" />
               )}
-            </>
+            </Fragment>
           );
         })}
       </Inbox>
