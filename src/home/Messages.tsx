@@ -12,6 +12,7 @@ import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
 
 export default function Messages() {
   const chats = useAppSelector(selectMessageData);
@@ -62,50 +63,55 @@ export default function Messages() {
   return (
     <div>
       <Inbox>
-        {chats.map((chat) => {
+        {chats.map((chat, index) => {
           const labelId = `checkbox-list-label-${chat.chatId}`;
           const chatAtTheEnd = chat.messages[chat.messages.length - 1];
           const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
 
           return (
-            <ListItem key={chat.chatId} disablePadding>
-              <ListItemButton
-                role={undefined}
-                dense
-                style={{ paddingTop: "0px", paddingBottom: "0px" }}
-                selected={checked.indexOf(chat.chatId) !== -1}
-              >
-                <ListItemIcon>
-                  <Checkbox
-                    onClick={handleToggle(chat.chatId)}
-                    edge="start"
-                    checked={checked.indexOf(chat.chatId) !== -1}
-                    tabIndex={-1}
-                    disableRipple
-                    inputProps={{ "aria-labelledby": labelId }}
-                    style={{ margin: 0 }}
-                  />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <div>
+            <>
+              <ListItem key={chat.chatId} disablePadding>
+                <ListItemButton
+                  role={undefined}
+                  dense
+                  style={{ paddingTop: "0px", paddingBottom: "0px" }}
+                  selected={checked.indexOf(chat.chatId) !== -1}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      onClick={handleToggle(chat.chatId)}
+                      edge="start"
+                      checked={checked.indexOf(chat.chatId) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{ "aria-labelledby": labelId }}
+                      style={{ margin: 0 }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={
                       <div>
-                        <div>{chat.chatId}</div>
-                        <div className="latest-chat">
-                          {chatAtTheEnd.writtenBy === user.numberPlate
-                            ? "You: "
-                            : `${chatAtTheEnd.writtenBy}: `}
-                          {chatAtTheEnd.content}
+                        <div>
+                          <div>{chat.chatId}</div>
+                          <div className="latest-chat">
+                            {chatAtTheEnd.writtenBy === user.numberPlate
+                              ? "You: "
+                              : `${chatAtTheEnd.writtenBy}: `}
+                            {chatAtTheEnd.content}
+                          </div>
                         </div>
+                        <div style={{ color: "#797979" }}>{createdAt}</div>
                       </div>
-                      <div style={{ color: "#797979" }}>{createdAt}</div>
-                    </div>
-                  }
-                  onClick={() => handleEnterChat(chat.chatId)}
-                  style={{ padding: "15px 0px", margin: "0px" }}
-                />
-              </ListItemButton>
-            </ListItem>
+                    }
+                    onClick={() => handleEnterChat(chat.chatId)}
+                    style={{ padding: "15px 0px", margin: "0px" }}
+                  />
+                </ListItemButton>
+              </ListItem>
+              {index !== chats.length - 1 && (
+                <Divider key={index} variant="middle" component="li" />
+              )}
+            </>
           );
         })}
       </Inbox>
