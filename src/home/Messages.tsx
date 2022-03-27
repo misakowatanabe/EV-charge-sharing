@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { getAuth } from "firebase/auth";
 import { useAppSelector } from "../context/Hooks";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
+import { selectProfileData } from "../context/slices/ProfileDataSlice";
 import Inbox from "./Inbox";
 import DeleteChatAlert from "./DeleteChatAlert";
+import getFormattedDate from "../reusableFunction/getFormattedDate";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemButton from "@mui/material/ListItemButton";
@@ -13,6 +15,7 @@ import Checkbox from "@mui/material/Checkbox";
 
 export default function Messages() {
   const chats = useAppSelector(selectMessageData);
+  const user = useAppSelector(selectProfileData);
   const auth = getAuth();
   const navigate = useNavigate();
 
@@ -61,13 +64,8 @@ export default function Messages() {
       <Inbox>
         {chats.map((chat) => {
           const labelId = `checkbox-list-label-${chat.chatId}`;
-
-          var createdAt;
-          if (chat.createdAt) {
-            createdAt = new Date(chat.createdAt).toLocaleString("en-GB", {
-              hour12: false,
-            });
-          }
+          const chatAtTheEnd = chat.messages[chat.messages.length - 1];
+          const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
 
           return (
             <ListItem key={chat.chatId} disablePadding>
@@ -85,18 +83,22 @@ export default function Messages() {
                     tabIndex={-1}
                     disableRipple
                     inputProps={{ "aria-labelledby": labelId }}
+                    style={{ margin: 0 }}
                   />
                 </ListItemIcon>
                 <ListItemText
                   primary={
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <div>{chat.chatId}</div>
-                      <div>{createdAt}</div>
+                    <div>
+                      <div>
+                        <div>{chat.chatId}</div>
+                        <div className="latest-chat">
+                          {chatAtTheEnd.writtenBy === user.numberPlate
+                            ? "You: "
+                            : `${chatAtTheEnd.writtenBy}: `}
+                          {chatAtTheEnd.content}
+                        </div>
+                      </div>
+                      <div style={{ color: "#797979" }}>{createdAt}</div>
                     </div>
                   }
                   onClick={() => handleEnterChat(chat.chatId)}

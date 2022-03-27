@@ -174,3 +174,13 @@ a:-webkit-any-link {
 }
 
 /* Reusable components end */
+
+.latest-chat {
+  color: #797979;
+  margin-right: 10px;
+  white-space: pre-wrap;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+}

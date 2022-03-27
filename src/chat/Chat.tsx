@@ -7,11 +7,11 @@ import TopBar from "./TopBar";
 import BottomBar from "./BottomBar";
 import ChatCreatedAt from "./ChatCreatedAt";
 import Message from "./Message";
+import getFormattedDate from "../reusableFunction/getFormattedDate";
 import { nanoid } from "nanoid";
 import { ENDPOINT } from "../Config";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
-import { format } from "date-fns";
 
 export default function Chat() {
   let { userNP } = useParams();
@@ -39,22 +39,6 @@ export default function Chat() {
     }
   };
   useEffect(scrollToBottom, [messagesWithMatchedUser, initialLoadingEnd]);
-
-  const getFormattedDate = (createdAt: number) => {
-    const epocAWeekAgo = Date.now() - 604800000;
-    const epocADayAgo = Date.now() - 86400000;
-    var formatedCreatedAt;
-    if (createdAt <= epocAWeekAgo) {
-      formatedCreatedAt = format(new Date(createdAt), "MMMM do H:mma");
-    } else {
-      if (createdAt <= epocADayAgo) {
-        formatedCreatedAt = format(new Date(createdAt), "eeee H:mma");
-      } else {
-        formatedCreatedAt = format(new Date(createdAt), "'Today' H:mma");
-      }
-    }
-    return formatedCreatedAt;
-  };
 
   useEffect(() => {
     const findChat = async () => {
