@@ -5,6 +5,7 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
+import CloseIcon from "@mui/icons-material/Close";
 import { ENDPOINT } from "../Config";
 
 export default function Search() {
@@ -15,6 +16,11 @@ export default function Search() {
   const [open, setOpen] = useState(false);
 
   const auth = getAuth();
+
+  const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setNumber("");
+  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -49,7 +55,12 @@ export default function Search() {
 
   return (
     <div>
-      <form noValidate autoComplete="off" onSubmit={handleSubmit}>
+      <form
+        noValidate
+        autoComplete="off"
+        onSubmit={handleSubmit}
+        onReset={handleReset}
+      >
         <div className="textfield">
           <TextField
             variant="outlined"
@@ -63,6 +74,15 @@ export default function Search() {
                   <Button type="submit" className="search-button">
                     <SearchIcon />
                   </Button>
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <InputAdornment position="end">
+                  {number !== "" && (
+                    <Button type="reset" className="search-button">
+                      <CloseIcon />
+                    </Button>
+                  )}
                 </InputAdornment>
               ),
             }}
