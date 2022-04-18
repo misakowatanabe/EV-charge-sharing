@@ -11,6 +11,7 @@ interface MessageDataState {
       writtenBy?: string;
     }[];
     createdAt: number;
+    status: string;
   }[];
 }
 

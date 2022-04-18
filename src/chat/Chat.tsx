@@ -41,6 +41,32 @@ export default function Chat() {
   useEffect(scrollToBottom, [messagesWithMatchedUser, initialLoadingEnd]);
 
   useEffect(() => {
+    const messageData = {
+      userNP: userNP,
+      matchedNP: matchedNP,
+      status: "Read",
+    };
+
+    try {
+      fetch(`${ENDPOINT}/openNewChat`, {
+        method: "POST",
+        body: JSON.stringify(messageData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "cors",
+      }).then((res) => {
+        res.json().then((res) => {
+          if (res.message === 200) {
+          } else if (res.message === 500) {
+            navigate("/error");
+          }
+        });
+      });
+    } catch (error) {
+      navigate("/error");
+    }
+
     const findChat = async () => {
       const foundChatWithMatchedNP = allChatsRelatedToUser.find(
         (chat) => chat.chatId === matchedNP
@@ -82,7 +108,7 @@ export default function Chat() {
         setMessagesWithMatchedUser(messagesContents);
       }
     });
-  }, [allChatsRelatedToUser, matchedNP, userNP]);
+  }, [allChatsRelatedToUser, matchedNP, userNP, navigate]);
 
   const [messageLetters, setMessageLetters] = useState("");
   const messageData = {
@@ -91,6 +117,7 @@ export default function Chat() {
     messageId: nanoid(8),
     message: messageLetters,
     createdAt: Date.now(),
+    status: "Not read yet",
   };
 
   function validateForm() {

@@ -74,7 +74,18 @@ export default function Messages() {
                 <ListItemButton
                   role={undefined}
                   dense
-                  style={{ paddingTop: "0px", paddingBottom: "0px" }}
+                  style={
+                    chat.status === "Not read yet"
+                      ? {
+                          paddingTop: "0px",
+                          paddingBottom: "0px",
+                        }
+                      : {
+                          paddingTop: "0px",
+                          paddingBottom: "0px",
+                          backgroundColor: "#e7e7e7",
+                        }
+                  }
                   selected={checked.indexOf(chat.chatId) !== -1}
                 >
                   <ListItemIcon>
@@ -92,7 +103,15 @@ export default function Messages() {
                     primary={
                       <div>
                         <div>
-                          <div>{chat.chatId}</div>
+                          <div
+                            style={
+                              chat.status === "Not read yet"
+                                ? { fontWeight: 500 }
+                                : { fontWeight: 400 }
+                            }
+                          >
+                            {chat.chatId}
+                          </div>
                           <div className="latest-chat">
                             {chatAtTheEnd.writtenBy === user.numberPlate
                               ? "You: "
@@ -109,7 +128,7 @@ export default function Messages() {
                 </ListItemButton>
               </ListItem>
               {index !== chats.length - 1 && (
-                <Divider variant="middle" component="li" />
+                <Divider variant="fullWidth" component="li" />
               )}
             </Fragment>
           );
