@@ -57,7 +57,6 @@ const useApp = () => {
 
           socket.on("newChangesInMessages", (messageList) => {
             dispatch(updateMessageData(messageList));
-            console.log(messageList);
           });
         }
 
