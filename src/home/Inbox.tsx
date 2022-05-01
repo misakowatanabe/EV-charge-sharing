@@ -6,7 +6,6 @@ import Paper from "@mui/material/Paper";
 const Inbox: FC = ({ children }) => {
   return (
     <div>
-      <div style={{ textAlign: "center" }}>Inbox</div>
       <Box
         sx={{
           justifyContent: "center",

@@ -5,12 +5,11 @@ import { Box } from "@mui/system";
 export default function Home() {
   return (
     <div>
-      <div style={{ textAlign: "center" }}>Search</div>
       <Box
         sx={{
           justifyContent: "center",
           maxWidth: "360px",
-          margin: "auto",
+          margin: "100px auto auto auto",
         }}
       >
         <Search />

@@ -38,125 +38,129 @@ export default function Messages() {
     navigate(`/chat/${auth.currentUser!.displayName}/${chatId}`);
   };
 
+  let InboxContents;
   if (chats.length === 0) {
-    return (
-      <Inbox>
-        <ListItem disablePadding>
-          <ListItemButton
-            role={undefined}
-            dense
-            style={{ paddingTop: "0px", paddingBottom: "0px" }}
-          >
-            <ListItemIcon>
-              <Checkbox edge="start" tabIndex={-1} disableRipple />
-            </ListItemIcon>
-            <ListItemText
-              primary={<div>No chats</div>}
-              style={{ padding: "15px 0px", margin: "0px" }}
-            />
-          </ListItemButton>
-        </ListItem>
-      </Inbox>
+    InboxContents = (
+      <ListItem disablePadding>
+        <ListItemButton
+          role={undefined}
+          dense
+          style={{ paddingTop: "0px", paddingBottom: "0px" }}
+        >
+          <ListItemIcon>
+            <Checkbox edge="start" tabIndex={-1} disableRipple />
+          </ListItemIcon>
+          <ListItemText
+            primary={<div>No chats</div>}
+            style={{ padding: "15px 0px", margin: "0px" }}
+          />
+        </ListItemButton>
+      </ListItem>
     );
+  } else {
+    InboxContents = chats.map((chat, index) => {
+      const labelId = `checkbox-list-label-${chat.chatId}`;
+      const chatAtTheEnd = chat.messages[chat.messages.length - 1];
+      const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
+
+      let StyleBackground: {
+        paddingTop: string;
+        paddingBottom: string;
+        backgroundColor?: string;
+      } = {
+        paddingTop: "0px",
+        paddingBottom: "0px",
+      };
+      let StyleTitle: { fontWeight: number } = { fontWeight: 500 };
+
+      if (chat.status === "Read") {
+        StyleBackground.backgroundColor = "#e7e7e7";
+        StyleTitle.fontWeight = 400;
+      } else if (chat.status === "Deleted") {
+        StyleBackground.backgroundColor = "#d3e0e6";
+        StyleTitle.fontWeight = 400;
+      }
+
+      let WrittenBy;
+      if (chatAtTheEnd.writtenBy === user.numberPlate) {
+        WrittenBy = "You";
+      } else {
+        WrittenBy = chatAtTheEnd.writtenBy;
+      }
+
+      let Preview;
+      if (chat.status === "Deleted") {
+        Preview = (
+          <div style={{ color: "#797979" }}>The chat has been deleted.</div>
+        );
+      } else {
+        Preview = (
+          <div>
+            <div className="latest-chat">
+              {`${WrittenBy}: ${chatAtTheEnd.content}`}
+            </div>
+            <div style={{ color: "#797979" }}>{createdAt}</div>
+          </div>
+        );
+      }
+
+      return (
+        <Fragment key={chat.chatId}>
+          <ListItem disablePadding>
+            <ListItemButton
+              role={undefined}
+              dense
+              style={StyleBackground}
+              selected={checked.indexOf(chat.chatId) !== -1}
+            >
+              <ListItemIcon>
+                <Checkbox
+                  onClick={handleToggle(chat.chatId)}
+                  edge="start"
+                  checked={checked.indexOf(chat.chatId) !== -1}
+                  tabIndex={-1}
+                  disableRipple
+                  inputProps={{ "aria-labelledby": labelId }}
+                  style={{ margin: 0 }}
+                />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <>
+                    <div style={StyleTitle}>{chat.chatId}</div>
+                    {Preview}
+                  </>
+                }
+                onClick={() => handleEnterChat(chat.chatId)}
+                style={{ padding: "15px 0px", margin: "0px" }}
+              />
+            </ListItemButton>
+          </ListItem>
+          {index !== chats.length - 1 && (
+            <Divider variant="fullWidth" component="li" />
+          )}
+        </Fragment>
+      );
+    });
   }
 
   return (
     <div>
-      <Inbox>
-        {chats.map((chat, index) => {
-          const labelId = `checkbox-list-label-${chat.chatId}`;
-          const chatAtTheEnd = chat.messages[chat.messages.length - 1];
-          const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
-
-          let StyleBackground: {
-            paddingTop: string;
-            paddingBottom: string;
-            backgroundColor?: string;
-          } = {
-            paddingTop: "0px",
-            paddingBottom: "0px",
-          };
-          let StyleTitle: { fontWeight: number } = { fontWeight: 500 };
-
-          if (chat.status === "Read") {
-            StyleBackground.backgroundColor = "#e7e7e7";
-            StyleTitle.fontWeight = 400;
-          } else if (chat.status === "Deleted") {
-            StyleBackground.backgroundColor = "#d3e0e6";
-            StyleTitle.fontWeight = 400;
-          }
-
-          let WrittenBy;
-          if (chatAtTheEnd.writtenBy === user.numberPlate) {
-            WrittenBy = "You";
-          } else {
-            WrittenBy = chatAtTheEnd.writtenBy;
-          }
-
-          let Preview;
-          if (chat.status === "Deleted") {
-            Preview = (
-              <div style={{ color: "#797979" }}>The chat has been deleted.</div>
-            );
-          } else {
-            Preview = (
-              <div>
-                <div className="latest-chat">
-                  {`${WrittenBy}: ${chatAtTheEnd.content}`}
-                </div>
-                <div style={{ color: "#797979" }}>{createdAt}</div>
-              </div>
-            );
-          }
-
-          const Contents = (
-            <>
-              <div>
-                <div style={StyleTitle}>{chat.chatId}</div>
-                {Preview}
-              </div>
-            </>
-          );
-
-          return (
-            <Fragment key={chat.chatId}>
-              <ListItem disablePadding>
-                <ListItemButton
-                  role={undefined}
-                  dense
-                  style={StyleBackground}
-                  selected={checked.indexOf(chat.chatId) !== -1}
-                >
-                  <ListItemIcon>
-                    <Checkbox
-                      onClick={handleToggle(chat.chatId)}
-                      edge="start"
-                      checked={checked.indexOf(chat.chatId) !== -1}
-                      tabIndex={-1}
-                      disableRipple
-                      inputProps={{ "aria-labelledby": labelId }}
-                      style={{ margin: 0 }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={Contents}
-                    onClick={() => handleEnterChat(chat.chatId)}
-                    style={{ padding: "15px 0px", margin: "0px" }}
-                  />
-                </ListItemButton>
-              </ListItem>
-              {index !== chats.length - 1 && (
-                <Divider variant="fullWidth" component="li" />
-              )}
-            </Fragment>
-          );
-        })}
-      </Inbox>
-      <DeleteChatAlert
-        checked={checked}
-        setChecked={setChecked}
-        userNP={user.numberPlate}
-      />
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ textAlign: "center", color: "#6e6e6e" }}>Inbox</div>
+        <DeleteChatAlert
+          checked={checked}
+          setChecked={setChecked}
+          userNP={user.numberPlate}
+        />
+      </div>
+      <Inbox>{InboxContents}</Inbox>
     </div>
   );
 }
