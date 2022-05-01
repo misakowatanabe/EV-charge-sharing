@@ -16,8 +16,6 @@ const useApp = () => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       const socket = io(`${ENDPOINT}`);
       let userSessionTimeout = 0;
-      console.log(auth.currentUser);
-      console.log(user);
 
       if (user) {
         // User is signed in
@@ -27,9 +25,6 @@ const useApp = () => {
         if (auth.currentUser!.displayName) {
           var numberPlate = user.displayName;
           const numberPlateData = { data: numberPlate };
-          console.log(
-            `Auth OK, user logged in ${user.uid}, DN: ${numberPlate}`
-          );
 
           try {
             await fetch(`${ENDPOINT}/catch-user-np`, {
