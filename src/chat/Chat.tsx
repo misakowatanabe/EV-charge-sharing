@@ -22,6 +22,7 @@ export default function Chat() {
   const allChatsRelatedToUser = useAppSelector(selectMessageData);
 
   const [chatCreatedAt, setChatCreatedAt] = useState("");
+  const [chatStatus, setChatStatus] = useState("");
   const [messagesWithMatchedUser, setMessagesWithMatchedUser] = useState<
     JSX.Element[][]
   >([]);
@@ -41,32 +42,6 @@ export default function Chat() {
   useEffect(scrollToBottom, [messagesWithMatchedUser, initialLoadingEnd]);
 
   useEffect(() => {
-    const messageData = {
-      userNP: userNP,
-      matchedNP: matchedNP,
-      status: "Read",
-    };
-
-    try {
-      fetch(`${ENDPOINT}/openNewChat`, {
-        method: "POST",
-        body: JSON.stringify(messageData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-      }).then((res) => {
-        res.json().then((res) => {
-          if (res.message === 200) {
-          } else if (res.message === 500) {
-            navigate("/error");
-          }
-        });
-      });
-    } catch (error) {
-      navigate("/error");
-    }
-
     const findChat = async () => {
       const foundChatWithMatchedNP = allChatsRelatedToUser.find(
         (chat) => chat.chatId === matchedNP
@@ -85,6 +60,39 @@ export default function Chat() {
       const chatWithMatchedNP = allChatsRelatedToUser.filter(
         (chat) => chat.chatId === matchedNP
       );
+
+      if (chatWithMatchedNP[0]) {
+        setChatStatus(chatWithMatchedNP[0].status);
+      }
+
+      if (chatStatus === "Not read yet") {
+        const messageData = {
+          userNP: userNP,
+          matchedNP: matchedNP,
+          status: "Read",
+        };
+
+        try {
+          fetch(`${ENDPOINT}/openNewChat`, {
+            method: "POST",
+            body: JSON.stringify(messageData),
+            headers: {
+              "Content-Type": "application/json",
+            },
+            mode: "cors",
+          }).then((res) => {
+            res.json().then((res) => {
+              if (res.message === 200) {
+              } else if (res.message === 500) {
+                navigate("/error");
+              }
+            });
+          });
+        } catch (error) {
+          navigate("/error");
+        }
+      }
+
       return await Promise.resolve(chatWithMatchedNP);
     };
 
@@ -108,7 +116,7 @@ export default function Chat() {
         setMessagesWithMatchedUser(messagesContents);
       }
     });
-  }, [allChatsRelatedToUser, matchedNP, userNP, navigate]);
+  }, [allChatsRelatedToUser, matchedNP, userNP, navigate, chatStatus]);
 
   const [messageLetters, setMessageLetters] = useState("");
   const messageData = {
@@ -155,6 +163,11 @@ export default function Chat() {
         <ChatCreatedAt>Chat created: {chatCreatedAt}</ChatCreatedAt>
       )}
       <div>{messagesWithMatchedUser}</div>
+      {chatStatus === "Deleted" && (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          The chat has been deleted.
+        </div>
+      )}
       <BottomBar>
         <form noValidate autoComplete="off" onSubmit={handleMessageSubmit}>
           <div
@@ -188,7 +201,9 @@ export default function Chat() {
                 />
               </Grid>
               <Grid item xs="auto" style={{ marginLeft: "15px" }}>
-                <SendMessageButton disabled={!validateForm()}>
+                <SendMessageButton
+                  disabled={!validateForm() || chatStatus === "Deleted"}
+                >
                   Send
                 </SendMessageButton>
               </Grid>

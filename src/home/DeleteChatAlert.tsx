@@ -14,11 +14,13 @@ import ListItemText from "@mui/material/ListItemText";
 type DeleteChatAlertProps = {
   checked: string[];
   setChecked: Dispatch<SetStateAction<string[]>>;
+  userNP: string;
 };
 
 export default function DeleteChatAlert({
   checked,
   setChecked,
+  userNP,
 }: DeleteChatAlertProps) {
   const [open, setOpen] = useState(false);
 
@@ -67,7 +69,12 @@ export default function DeleteChatAlert({
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCancel}>Cancel</Button>
-          <DeleteChat setOpen={setOpen} setChecked={setChecked} />
+          <DeleteChat
+            setOpen={setOpen}
+            setChecked={setChecked}
+            checked={checked}
+            userNP={userNP}
+          />
         </DialogActions>
       </Dialog>
     </div>

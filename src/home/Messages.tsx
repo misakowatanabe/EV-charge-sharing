@@ -68,24 +68,63 @@ export default function Messages() {
           const chatAtTheEnd = chat.messages[chat.messages.length - 1];
           const createdAt = getFormattedDate(chatAtTheEnd.createdAt!);
 
+          let StyleBackground: {
+            paddingTop: string;
+            paddingBottom: string;
+            backgroundColor?: string;
+          } = {
+            paddingTop: "0px",
+            paddingBottom: "0px",
+          };
+          let StyleTitle: { fontWeight: number } = { fontWeight: 500 };
+
+          if (chat.status === "Read") {
+            StyleBackground.backgroundColor = "#e7e7e7";
+            StyleTitle.fontWeight = 400;
+          } else if (chat.status === "Deleted") {
+            StyleBackground.backgroundColor = "#d3e0e6";
+            StyleTitle.fontWeight = 400;
+          }
+
+          let WrittenBy;
+          if (chatAtTheEnd.writtenBy === user.numberPlate) {
+            WrittenBy = "You";
+          } else {
+            WrittenBy = chatAtTheEnd.writtenBy;
+          }
+
+          let Preview;
+          if (chat.status === "Deleted") {
+            Preview = (
+              <div style={{ color: "#797979" }}>The chat has been deleted.</div>
+            );
+          } else {
+            Preview = (
+              <div>
+                <div className="latest-chat">
+                  {`${WrittenBy}: ${chatAtTheEnd.content}`}
+                </div>
+                <div style={{ color: "#797979" }}>{createdAt}</div>
+              </div>
+            );
+          }
+
+          const Contents = (
+            <>
+              <div>
+                <div style={StyleTitle}>{chat.chatId}</div>
+                {Preview}
+              </div>
+            </>
+          );
+
           return (
             <Fragment key={chat.chatId}>
               <ListItem disablePadding>
                 <ListItemButton
                   role={undefined}
                   dense
-                  style={
-                    chat.status === "Not read yet"
-                      ? {
-                          paddingTop: "0px",
-                          paddingBottom: "0px",
-                        }
-                      : {
-                          paddingTop: "0px",
-                          paddingBottom: "0px",
-                          backgroundColor: "#e7e7e7",
-                        }
-                  }
+                  style={StyleBackground}
                   selected={checked.indexOf(chat.chatId) !== -1}
                 >
                   <ListItemIcon>
@@ -100,28 +139,7 @@ export default function Messages() {
                     />
                   </ListItemIcon>
                   <ListItemText
-                    primary={
-                      <div>
-                        <div>
-                          <div
-                            style={
-                              chat.status === "Not read yet"
-                                ? { fontWeight: 500 }
-                                : { fontWeight: 400 }
-                            }
-                          >
-                            {chat.chatId}
-                          </div>
-                          <div className="latest-chat">
-                            {chatAtTheEnd.writtenBy === user.numberPlate
-                              ? "You: "
-                              : `${chatAtTheEnd.writtenBy}: `}
-                            {chatAtTheEnd.content}
-                          </div>
-                        </div>
-                        <div style={{ color: "#797979" }}>{createdAt}</div>
-                      </div>
-                    }
+                    primary={Contents}
                     onClick={() => handleEnterChat(chat.chatId)}
                     style={{ padding: "15px 0px", margin: "0px" }}
                   />
@@ -134,7 +152,11 @@ export default function Messages() {
           );
         })}
       </Inbox>
-      <DeleteChatAlert checked={checked} setChecked={setChecked} />
+      <DeleteChatAlert
+        checked={checked}
+        setChecked={setChecked}
+        userNP={user.numberPlate}
+      />
     </div>
   );
 }
