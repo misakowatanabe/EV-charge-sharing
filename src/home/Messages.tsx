@@ -151,6 +151,7 @@ export default function Messages() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          paddingBottom: "10px",
         }}
       >
         <div style={{ textAlign: "center", color: "#6e6e6e" }}>Inbox</div>

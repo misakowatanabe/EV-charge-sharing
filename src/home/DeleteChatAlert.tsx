@@ -7,9 +7,6 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
 
 type DeleteChatAlertProps = {
   checked: string[];
@@ -32,25 +29,22 @@ export default function DeleteChatAlert({
     setOpen(false);
   };
 
-  var checkedChat = checked.map((item) => {
-    return <li key={item}>{item}</li>;
-  });
-
   return (
     <div>
-      <ListItem
-        button
+      <Button
+        variant="text"
+        sx={{
+          textTransform: "none",
+          px: "16px",
+          borderRadius: "18px",
+          "&:hover": { borderRadius: "18px" },
+        }}
         onClick={handleClickOpen}
-        style={{ padding: "15px 12px" }}
         disabled={!checked[0]}
+        startIcon={<DeleteIcon />}
       >
-        <ListItemIcon style={{ minWidth: "40px" }}>
-          <DeleteIcon />
-        </ListItemIcon>
-        <ListItemText
-          primary={<div style={{ fontSize: "0.875rem" }}>Delete Chat</div>}
-        />
-      </ListItem>
+        Delete Chat
+      </Button>
       <Dialog
         open={open}
         onClose={handleCancel}
@@ -64,7 +58,11 @@ export default function DeleteChatAlert({
             <div>
               You will delete all messages inside the chat once you delete it.
             </div>
-            <ul>{checkedChat}</ul>
+            <ul>
+              {checked.map((item) => {
+                return <li key={item}>{item}</li>;
+              })}
+            </ul>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
