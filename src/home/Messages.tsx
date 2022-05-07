@@ -42,19 +42,10 @@ export default function Messages() {
   if (chats.length === 0) {
     InboxContents = (
       <ListItem disablePadding>
-        <ListItemButton
-          role={undefined}
-          dense
-          style={{ paddingTop: "0px", paddingBottom: "0px" }}
-        >
-          <ListItemIcon>
-            <Checkbox edge="start" tabIndex={-1} disableRipple />
-          </ListItemIcon>
-          <ListItemText
-            primary={<div>No chats</div>}
-            style={{ padding: "15px 0px", margin: "0px" }}
-          />
-        </ListItemButton>
+        <ListItemText
+          primary={<div>No chats</div>}
+          style={{ padding: "15px 16px", margin: "0px" }}
+        />
       </ListItem>
     );
   } else {
