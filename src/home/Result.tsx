@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { NavLink } from "react-router-dom";
 import { getAuth } from "firebase/auth";
-import CreateChatButton from "../buttons/CreateChatButton";
+import CreateChatButton from "../reusableComponents/CreateChatButton";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";

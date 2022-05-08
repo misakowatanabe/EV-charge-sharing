@@ -1,5 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAppDispatch } from "../context/Hooks";
+import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import Button from "@mui/material/Button";
 import { ENDPOINT } from "../Config";
 
@@ -17,6 +19,7 @@ export default function DeleteChat({
   userNP,
 }: DeleteChatProps) {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const handleDeleteChat = () => {
     checked.map((matchedNP) => {
@@ -36,7 +39,21 @@ export default function DeleteChat({
         }).then((res) => {
           res.json().then((res) => {
             if (res.message === 200) {
+              dispatch(
+                updateSnackbarData({
+                  snackState: true,
+                  severity: "success",
+                  message: "The chat has been deleted",
+                })
+              );
             } else if (res.message === 500) {
+              dispatch(
+                updateSnackbarData({
+                  snackState: true,
+                  severity: "error",
+                  message: "Error occurred, could not delete the chat",
+                })
+              );
               navigate("/error");
             }
           });

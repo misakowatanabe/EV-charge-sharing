@@ -11,7 +11,7 @@ import SignupName from "./SignupName";
 import SignupNumberPlate from "./SignupNumberPlate";
 import SignupEmail from "./SignupEmail";
 import SignupPassword from "./SignupPassword";
-import Button1 from "../buttons/Button1";
+import Button1 from "../reusableComponents/Button1";
 import LockIcon from "../icon/LockIcon";
 import { useAppDispatch } from "../context/Hooks";
 import { updateProfileData } from "../context/slices/ProfileDataSlice";

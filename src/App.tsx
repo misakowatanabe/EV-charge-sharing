@@ -12,6 +12,7 @@ import Account from "./account/Account";
 import Setting from "./setting/Setting";
 import NotFound from "./error/NotFound";
 import Error from "./error/Error";
+import SnackBar from "./reusableComponents/Snackbar";
 
 function App() {
   FirebaseConfig();
@@ -35,6 +36,7 @@ function App() {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </HashRouter>
+      <SnackBar />
     </div>
   );
 }

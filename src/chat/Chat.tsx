@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../context/Hooks";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
-import SendMessageButton from "../buttons/SendMessageButton";
+import SendMessageButton from "../reusableComponents/SendMessageButton";
 import TopBar from "./TopBar";
 import BottomBar from "./BottomBar";
 import ChatCreatedAt from "./ChatCreatedAt";

@@ -4,7 +4,7 @@ import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import LockIcon from "../icon/LockIcon";
 import SigninEmail from "./SigninEmail";
 import SigninPassword from "./SigninPassword";
-import Button1 from "../buttons/Button1";
+import Button1 from "../reusableComponents/Button1";
 
 export default function Signin() {
   const [email, setEmail] = useState("");

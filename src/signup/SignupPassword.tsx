@@ -1,5 +1,5 @@
 import { useState, Dispatch, SetStateAction } from "react";
-import PasswordToggleButton from "../buttons/PasswordToggleButton";
+import PasswordToggleButton from "../reusableComponents/PasswordToggleButton";
 import TextField from "@mui/material/TextField";
 
 type signupPasswordProps = {
