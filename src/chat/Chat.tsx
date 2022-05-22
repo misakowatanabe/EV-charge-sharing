@@ -2,14 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAppSelector } from "../context/Hooks";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
+import { useAppDispatch } from "../context/Hooks";
+import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import SendMessageButton from "../reusableComponents/SendMessageButton";
 import TopBar from "./TopBar";
 import BottomBar from "./BottomBar";
 import ChatCreatedAt from "./ChatCreatedAt";
 import Message from "./Message";
+import { callApiCreate, callApiOpenChat } from "../reusableFunction/callApi";
 import getFormattedDate from "../reusableFunction/getFormattedDate";
 import { nanoid } from "nanoid";
-import { ENDPOINT } from "../Config";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 
@@ -18,6 +20,7 @@ export default function Chat() {
   let { matchedNP } = useParams();
 
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   const allChatsRelatedToUser = useAppSelector(selectMessageData);
 
@@ -66,29 +69,14 @@ export default function Chat() {
       }
 
       if (chatStatus === "Not read yet") {
-        const messageData = {
+        const data = {
           userNP: userNP,
           matchedNP: matchedNP,
           status: "Read",
         };
 
-        try {
-          fetch(`${ENDPOINT}/openNewChat`, {
-            method: "POST",
-            body: JSON.stringify(messageData),
-            headers: {
-              "Content-Type": "application/json",
-            },
-            mode: "cors",
-          }).then((res) => {
-            res.json().then((res) => {
-              if (res.message === 200) {
-              } else if (res.message === 500) {
-                navigate("/error");
-              }
-            });
-          });
-        } catch (error) {
+        const result = await callApiOpenChat(data);
+        if (result === false) {
           navigate("/error");
         }
       }
@@ -119,7 +107,7 @@ export default function Chat() {
   }, [allChatsRelatedToUser, matchedNP, userNP, navigate, chatStatus]);
 
   const [messageLetters, setMessageLetters] = useState("");
-  const messageData = {
+  const data = {
     userNP: userNP,
     matchedNP: matchedNP,
     messageId: nanoid(8),
@@ -132,27 +120,21 @@ export default function Chat() {
     return messageLetters.length > 0;
   }
 
-  const handleMessageSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleMessageSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
     setMessageLetters("");
-    try {
-      fetch(`${ENDPOINT}/create`, {
-        method: "POST",
-        body: JSON.stringify(messageData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-        mode: "cors",
-      }).then((res) => {
-        res.json().then((res) => {
-          if (res.message === 200) {
-          } else if (res.message === 500) {
-            navigate("/error");
-          }
-        });
-      });
-    } catch (error) {
-      navigate("/error");
+
+    const result = await callApiCreate(data);
+    if (result === false) {
+      dispatch(
+        updateSnackbarData({
+          snackState: true,
+          severity: "error",
+          message: `Error occured, please try again`,
+        })
+      );
     }
   };
 

@@ -1,21 +1,24 @@
 import { useState } from "react";
 import { getAuth } from "firebase/auth";
 import Result from "./Result";
+import { callApiGet } from "../reusableFunction/callApi";
+import { useAppDispatch } from "../context/Hooks";
+import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
 import CloseIcon from "@mui/icons-material/Close";
-import { ENDPOINT } from "../Config";
 
 export default function Search() {
   const [number, setNumber] = useState("");
-  const [responseData, setResponseData] = useState("");
+  const [responseData, setResponseData] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState("");
   const [error, setError] = useState(false);
   const [open, setOpen] = useState(false);
 
   const auth = getAuth();
+  const dispatch = useAppDispatch();
 
   const handleReset = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,23 +34,17 @@ export default function Search() {
       setErrorMessage("Oops, that's yours");
       setError(true);
     } else {
-      const numberPlateForSearch = { data: number.toUpperCase() };
-      try {
-        await fetch(`${ENDPOINT}/search`, {
-          method: "POST",
-          body: JSON.stringify(numberPlateForSearch),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          mode: "cors",
-        }).then((res) => {
-          res.json().then((data) => {
-            setResponseData(data.message);
-          });
-        });
-      } catch (error) {
-        console.log(error);
-      } finally {
+      let result = await callApiGet(`${number.toUpperCase()}`);
+      if (result === `Error occured, please try again`) {
+        dispatch(
+          updateSnackbarData({
+            snackState: true,
+            severity: "error",
+            message: result,
+          })
+        );
+      } else {
+        setResponseData(result);
         setOpen(true);
       }
     }
