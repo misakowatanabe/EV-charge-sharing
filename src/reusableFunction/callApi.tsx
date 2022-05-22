@@ -19,8 +19,7 @@ async function callApiPost(data: DataProps, query: string) {
       },
       mode: "cors",
     });
-    const resJson = await res.json();
-    if (resJson.message === 500) {
+    if (res.status === 500) {
       return false;
     }
     return true;
@@ -54,5 +53,24 @@ export async function callApiGet(query: string) {
     return `${query} was found!`;
   } catch (error) {
     return `Error occured, please try again`;
+  }
+}
+
+export async function callApiDelete(data: DataProps) {
+  try {
+    const res = await fetch(`${ENDPOINT}/deleteChat`, {
+      method: "DELETE",
+      body: JSON.stringify(data),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    });
+    if (res.status === 500) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    return false;
   }
 }

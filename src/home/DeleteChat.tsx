@@ -1,9 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
-import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../context/Hooks";
 import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
+import { callApiDelete } from "../reusableFunction/callApi";
 import Button from "@mui/material/Button";
-import { ENDPOINT } from "../Config";
 
 type DeleteChatProps = {
   setOpen: Dispatch<SetStateAction<boolean>>;
@@ -18,51 +17,34 @@ export default function DeleteChat({
   checked,
   userNP,
 }: DeleteChatProps) {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
   const handleDeleteChat = () => {
-    checked.map((matchedNP) => {
-      const messageData = {
+    checked.map(async (matchedNP) => {
+      const data = {
         userNP: userNP,
         matchedNP: matchedNP,
       };
 
-      try {
-        fetch(`${ENDPOINT}/deleteChat`, {
-          method: "DELETE",
-          body: JSON.stringify(messageData),
-          headers: {
-            "Content-Type": "application/json",
-          },
-          mode: "cors",
-        }).then((res) => {
-          res.json().then((res) => {
-            if (res.message === 200) {
-              dispatch(
-                updateSnackbarData({
-                  snackState: true,
-                  severity: "success",
-                  message: "The chat has been deleted",
-                })
-              );
-            } else if (res.message === 500) {
-              dispatch(
-                updateSnackbarData({
-                  snackState: true,
-                  severity: "error",
-                  message: "Error occurred, could not delete the chat",
-                })
-              );
-              navigate("/error");
-            }
-          });
-        });
-      } catch (error) {
-        navigate("/error");
+      const result = await callApiDelete(data);
+      if (result === false) {
+        dispatch(
+          updateSnackbarData({
+            snackState: true,
+            severity: "error",
+            message: "Error occurred, could not delete the chat",
+          })
+        );
+      } else {
+        dispatch(
+          updateSnackbarData({
+            snackState: true,
+            severity: "success",
+            message: "The chat has been deleted",
+          })
+        );
       }
-
-      return null;
+      return;
     });
 
     setOpen(false);
