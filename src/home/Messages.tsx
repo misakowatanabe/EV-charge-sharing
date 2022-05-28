@@ -37,7 +37,6 @@ export default function Messages() {
   const handleEnterChat = (chatId: string) => {
     navigate(`/chat/${auth.currentUser!.displayName}/${chatId}`);
   };
-  console.log(auth.currentUser!.displayName);
 
   let InboxContents;
   if (chats.length === 0) {
