@@ -13,10 +13,12 @@ import SignupEmail from "./SignupEmail";
 import SignupPassword from "./SignupPassword";
 import Button1 from "../reusableComponents/Button1";
 import LockIcon from "../icon/LockIcon";
+import { callApiGetUserNp } from "../reusableFunction/callApi";
 import { useAppDispatch } from "../context/Hooks";
 import { updateProfileData } from "../context/slices/ProfileDataSlice";
 import { updateMessageData } from "../context/slices/MessageDataSlice";
 import { updateLoadingData } from "../context/slices/LoadingDataSlice";
+import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import { ENDPOINT } from "../Config";
 import { io } from "socket.io-client";
 
@@ -52,46 +54,36 @@ export default function Signup() {
                 console.log(error);
                 navigate("/error");
               })
-              .then(() => {
-                var numberPlate = user.displayName;
-                const numberPlateData = { data: numberPlate };
-                console.log(
-                  `Auth OK, user logged in ${user.uid}, DN: ${numberPlate}`
-                );
+              .then(async () => {
+                var numberPlate = user.displayName as string;
 
-                try {
-                  fetch(`${ENDPOINT}/catch-user-np`, {
-                    method: "POST",
-                    body: JSON.stringify(numberPlateData),
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    mode: "cors",
-                  }).then((res) => {
-                    res.json().then((data) => {
-                      console.log("In signup, Successfully sent np to backend");
-
-                      const socketProfile = io(`${ENDPOINT}`);
-                      socketProfile.on("newChangesInProfile", (profileList) => {
-                        dispatch(updateProfileData(profileList));
-                        dispatch(updateLoadingData("loaded"));
-                        console.log(
-                          `socket opened: ${socketProfile.connected}`
-                        );
-                        console.log(`Loading OK`);
-
-                        const socketMessages = io(`${ENDPOINT}`);
-                        socketMessages.on(
-                          "newChangesInMessages",
-                          (messageList) => {
-                            dispatch(updateMessageData(messageList));
-                          }
-                        );
-                      });
-                    });
+                const result = await callApiGetUserNp(numberPlate);
+                if (result === false) {
+                  dispatch(
+                    updateSnackbarData({
+                      snackState: true,
+                      severity: "error",
+                      message: `Error occured, please try again`,
+                    })
+                  );
+                } else {
+                  dispatch(
+                    updateSnackbarData({
+                      snackState: true,
+                      severity: "info",
+                      message: `Welcome to the app!`,
+                    })
+                  );
+                  const socketProfile = io(`${ENDPOINT}`);
+                  socketProfile.on("newChangesInProfile", (profileList) => {
+                    dispatch(updateProfileData(profileList));
+                    dispatch(updateLoadingData("loaded"));
                   });
-                } catch (error) {
-                  console.log(error);
+
+                  const socketMessages = io(`${ENDPOINT}`);
+                  socketMessages.on("newChangesInMessages", (messageList) => {
+                    dispatch(updateMessageData(messageList));
+                  });
                 }
               });
           }

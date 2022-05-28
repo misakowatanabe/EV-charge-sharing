@@ -1,10 +1,12 @@
 import { useEffect } from "react";
-import { useAppDispatch } from "./context/Hooks";
+import { callApiGetUserNp } from "./reusableFunction/callApi";
 import { updateUserAuthData } from "./context/slices/UserAuthDataSlice";
 import { updateMessageData } from "./context/slices/MessageDataSlice";
 import { updateProfileData } from "./context/slices/ProfileDataSlice";
 import { updateLoadingData } from "./context/slices/LoadingDataSlice";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { useAppDispatch } from "./context/Hooks";
+import { updateSnackbarData } from "./context/slices/SnackbarDataSlice";
 import { io } from "socket.io-client";
 import { ENDPOINT } from "./Config";
 
@@ -23,31 +25,22 @@ const useApp = () => {
         dispatch(updateUserAuthData(true));
 
         if (auth.currentUser!.displayName) {
-          var numberPlate = user.displayName;
-          const numberPlateData = { data: numberPlate };
+          var numberPlate = user.displayName as string;
 
-          try {
-            await fetch(`${ENDPOINT}/catch-user-np`, {
-              method: "POST",
-              body: JSON.stringify(numberPlateData),
-              headers: {
-                "Content-Type": "application/json",
-              },
-              mode: "cors",
-            }).then((res) => {
-              res.json().then((data) => {
-                console.log(`sent np to backend: ${data.message}`);
-              });
-            });
-          } catch (error) {
-            console.log(error);
+          const result = await callApiGetUserNp(numberPlate);
+          if (result === false) {
+            dispatch(
+              updateSnackbarData({
+                snackState: true,
+                severity: "error",
+                message: `Error occured, please try again`,
+              })
+            );
           }
 
           socket.on("newChangesInProfile", (profileList) => {
             dispatch(updateProfileData(profileList));
             dispatch(updateLoadingData("loaded"));
-            console.log(`socket opened: ${socket.connected}`);
-            console.log(`Loading OK`);
           });
 
           socket.on("newChangesInMessages", (messageList) => {

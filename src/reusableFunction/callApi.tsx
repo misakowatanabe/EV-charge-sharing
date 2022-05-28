@@ -36,6 +36,24 @@ export function callApiOpenChat(data: DataProps) {
   return callApiPost(data, "openNewChat");
 }
 
+export async function callApiGetUserNp(query: string) {
+  try {
+    const res = await fetch(`${ENDPOINT}/catch-user-np/${query}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    });
+    if (res.status === 500) {
+      return false;
+    }
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
 export async function callApiGet(query: string) {
   try {
     const res = await fetch(`${ENDPOINT}/search/${query}`, {

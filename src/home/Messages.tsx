@@ -37,6 +37,7 @@ export default function Messages() {
   const handleEnterChat = (chatId: string) => {
     navigate(`/chat/${auth.currentUser!.displayName}/${chatId}`);
   };
+  console.log(auth.currentUser!.displayName);
 
   let InboxContents;
   if (chats.length === 0) {
@@ -135,24 +136,26 @@ export default function Messages() {
     });
   }
 
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          paddingBottom: "10px",
-        }}
-      >
-        <div style={{ textAlign: "center", color: "#6e6e6e" }}>Inbox</div>
-        <DeleteChatAlert
-          checked={checked}
-          setChecked={setChecked}
-          userNP={user.numberPlate}
-        />
+  if (user) {
+    return (
+      <div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            paddingBottom: "10px",
+          }}
+        >
+          <div style={{ textAlign: "center", color: "#6e6e6e" }}>Inbox</div>
+          <DeleteChatAlert
+            checked={checked}
+            setChecked={setChecked}
+            userNP={user.numberPlate}
+          />
+        </div>
+        <Inbox>{InboxContents}</Inbox>
       </div>
-      <Inbox>{InboxContents}</Inbox>
-    </div>
-  );
+    );
+  } else return null;
 }
