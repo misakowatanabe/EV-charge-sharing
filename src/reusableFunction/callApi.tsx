@@ -1,6 +1,7 @@
 import { ENDPOINT } from "../Config";
 
 type DataProps = {
+  userUid?: string;
   userNP: string | undefined;
   matchedNP?: string | undefined;
   messageId?: string;
@@ -74,9 +75,9 @@ export async function callApiGet(query: string) {
   }
 }
 
-export async function callApiDelete(data: DataProps) {
+async function callApiDelete(data: DataProps, query: string) {
   try {
-    const res = await fetch(`${ENDPOINT}/deleteChat`, {
+    const res = await fetch(`${ENDPOINT}/${query}`, {
       method: "DELETE",
       body: JSON.stringify(data),
       headers: {
@@ -86,9 +87,18 @@ export async function callApiDelete(data: DataProps) {
     });
     if (res.status === 500) {
       return false;
+    } else {
+      return true;
     }
-    return true;
   } catch (error) {
     return false;
   }
+}
+
+export function callApiDeleteChat(data: DataProps) {
+  return callApiDelete(data, "deleteChat");
+}
+
+export async function callApiDeleteCollection(data: DataProps) {
+  return callApiDelete(data, "deleteCollection");
 }

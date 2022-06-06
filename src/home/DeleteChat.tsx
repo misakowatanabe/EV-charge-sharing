@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { useAppDispatch } from "../context/Hooks";
 import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
-import { callApiDelete } from "../reusableFunction/callApi";
+import { callApiDeleteChat } from "../reusableFunction/callApi";
 import Button from "@mui/material/Button";
 
 type DeleteChatProps = {
@@ -26,7 +26,7 @@ export default function DeleteChat({
         matchedNP: matchedNP,
       };
 
-      const result = await callApiDelete(data);
+      const result = await callApiDeleteChat(data);
       if (result === false) {
         dispatch(
           updateSnackbarData({
