@@ -20,10 +20,10 @@ async function callApiPost(data: DataProps, query: string) {
       },
       mode: "cors",
     });
-    if (res.status === 500) {
-      return false;
+    if (res.status === 200) {
+      return true;
     }
-    return true;
+    return false;
   } catch (error) {
     return false;
   }
@@ -46,10 +46,10 @@ export async function callApiGetUserNp(query: string) {
       },
       mode: "cors",
     });
-    if (res.status === 500) {
-      return false;
+    if (res.status === 200) {
+      return true;
     }
-    return true;
+    return false;
   } catch (error) {
     return false;
   }
@@ -66,10 +66,10 @@ export async function callApiGet(query: string) {
     });
     if (res.status === 204) {
       return `${query} does not exist...`;
-    } else if (res.status === 500) {
-      return `Error occured, please try again`;
+    } else if (res.status === 200) {
+      return `${query} was found!`;
     }
-    return `${query} was found!`;
+    return `Error occured, please try again`;
   } catch (error) {
     return `Error occured, please try again`;
   }
@@ -85,11 +85,10 @@ async function callApiDelete(data: DataProps, query: string) {
       },
       mode: "cors",
     });
-    if (res.status === 500) {
-      return false;
-    } else {
+    if (res.status === 200) {
       return true;
     }
+    return false;
   } catch (error) {
     return false;
   }
