@@ -6,7 +6,7 @@ interface LoadingDataState {
 }
 
 const initialState: LoadingDataState = {
-  value: "initial",
+  value: "loading",
 };
 
 export const loadingDataSlice = createSlice({

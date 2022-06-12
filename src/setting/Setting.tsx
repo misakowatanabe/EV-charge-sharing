@@ -15,7 +15,8 @@ export default function Setting() {
   const auth = getAuth();
   const dispatch = useAppDispatch();
   const messages = useAppSelector(selectMessageData);
-  console.log(messages);
+  const test = messages.map((item) => item.chatId);
+  console.log(test);
 
   const handleDeleteAccount = async () => {
     const userUid = auth.currentUser!.uid;
@@ -35,7 +36,7 @@ export default function Setting() {
           updateSnackbarData({
             snackState: true,
             severity: "error",
-            message: "Error occurred, could not delete the chat",
+            message: "Error occurred, could not delete collection",
           })
         );
       } else {
@@ -71,7 +72,9 @@ export default function Setting() {
         aria-labelledby="alert-dialog-title"
         aria-describedby="alert-dialog-description"
       >
-        <DialogTitle id="alert-dialog-title">{"Confirm sign out"}</DialogTitle>
+        <DialogTitle id="alert-dialog-title">
+          {"Confirm deleting account"}
+        </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
             Are you sure you delete account?

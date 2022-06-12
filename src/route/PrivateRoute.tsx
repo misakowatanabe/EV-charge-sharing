@@ -9,7 +9,7 @@ const PrivateRoute = () => {
   const userAuth = useSelector(selectUserAuthData);
   const loading = useSelector(selectLoadingData);
 
-  if (loading === "loading" || loading === "initial") {
+  if (loading === "loading") {
     return (
       <PrivateLayout>
         <div

@@ -20,5 +20,6 @@ export const userAuthDataSlice = createSlice({
 });
 
 export const { updateUserAuthData } = userAuthDataSlice.actions;
-export const selectUserAuthData = (state: RootState) => state.userAuthData.value;
+export const selectUserAuthData = (state: RootState) =>
+  state.userAuthData.value;
 export default userAuthDataSlice.reducer;

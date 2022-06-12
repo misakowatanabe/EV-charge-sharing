@@ -1,9 +1,13 @@
 import { useEffect } from "react";
 import { callApiGetUserNp } from "./reusableFunction/callApi";
-import { updateUserAuthData } from "./context/slices/UserAuthDataSlice";
+import {
+  updateUserAuthData,
+  selectUserAuthData,
+} from "./context/slices/UserAuthDataSlice";
 import { updateMessageData } from "./context/slices/MessageDataSlice";
 import { updateProfileData } from "./context/slices/ProfileDataSlice";
 import { updateLoadingData } from "./context/slices/LoadingDataSlice";
+import { useSelector } from "react-redux";
 import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
 import { useAppDispatch } from "./context/Hooks";
 import { updateSnackbarData } from "./context/slices/SnackbarDataSlice";
@@ -13,6 +17,7 @@ import { ENDPOINT } from "./Config";
 const useApp = () => {
   const auth = getAuth();
   const dispatch = useAppDispatch();
+  const userAuth = useSelector(selectUserAuthData);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -36,16 +41,16 @@ const useApp = () => {
                 message: `Error occured, please try again`,
               })
             );
+          } else {
+            socket.on("newChangesInProfile", (profileList) => {
+              dispatch(updateProfileData(profileList));
+              dispatch(updateLoadingData("loaded"));
+            });
+
+            socket.on("newChangesInMessages", (messageList) => {
+              dispatch(updateMessageData(messageList));
+            });
           }
-
-          socket.on("newChangesInProfile", (profileList) => {
-            dispatch(updateProfileData(profileList));
-            dispatch(updateLoadingData("loaded"));
-          });
-
-          socket.on("newChangesInMessages", (messageList) => {
-            dispatch(updateMessageData(messageList));
-          });
         }
 
         user.getIdTokenResult().then((idTokenResult) => {
@@ -83,7 +88,8 @@ const useApp = () => {
     return () => {
       unsubscribe();
     };
-  }, [auth, dispatch]);
+    // eslint-disable-next-line
+  }, [auth, userAuth]);
 };
 
 export default useApp;
