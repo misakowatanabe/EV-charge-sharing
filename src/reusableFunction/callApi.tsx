@@ -75,9 +75,9 @@ export async function callApiGet(query: string) {
   }
 }
 
-async function callApiDelete(data: DataProps, query: string) {
+export async function callApiDeleteChat(data: DataProps) {
   try {
-    const res = await fetch(`${ENDPOINT}/${query}`, {
+    const res = await fetch(`${ENDPOINT}/deleteChat`, {
       method: "DELETE",
       body: JSON.stringify(data),
       headers: {
@@ -94,10 +94,22 @@ async function callApiDelete(data: DataProps, query: string) {
   }
 }
 
-export function callApiDeleteChat(data: DataProps) {
-  return callApiDelete(data, "deleteChat");
-}
-
-export async function callApiDeleteCollection(data: DataProps) {
-  return callApiDelete(data, "deleteCollection");
+export async function callApiDeleteCollection(
+  chatPartners: { chatPartners: string[] },
+  userUid: string,
+  userNP: string
+) {
+  try {
+    const res = await fetch(`${ENDPOINT}/deleteAccount/${userUid}/${userNP}`, {
+      method: "DELETE",
+      body: JSON.stringify(chatPartners),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    });
+    return res;
+  } catch (error) {
+    return error;
+  }
 }

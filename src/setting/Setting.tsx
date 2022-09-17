@@ -2,7 +2,7 @@ import { useState } from "react";
 import { getAuth, signOut } from "firebase/auth";
 import { selectMessageData } from "../context/slices/MessageDataSlice";
 import { useAppDispatch, useAppSelector } from "../context/Hooks";
-import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
+// import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import { callApiDeleteCollection } from "../reusableFunction/callApi";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -13,42 +13,55 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 export default function Setting() {
   const auth = getAuth();
+  // eslint-disable-next-line
   const dispatch = useAppDispatch();
   const messages = useAppSelector(selectMessageData);
-  const test = messages.map((item) => item.chatId);
-  console.log(test);
 
   const handleDeleteAccount = async () => {
     const userUid = auth.currentUser!.uid;
-    const userNP = auth.currentUser!.displayName;
-    if (userNP != null) {
-      console.log(userNP);
-      const data = {
-        userUid: userUid,
-        userNP: userNP,
-        // matchedNP: matchedNP,
-      };
+    const userNP = auth.currentUser!.displayName!;
+    const chatPartners = messages.map((item) => item.chatId);
 
-      const result = await callApiDeleteCollection(data);
-      console.log(result);
-      if (result === false) {
-        dispatch(
-          updateSnackbarData({
-            snackState: true,
-            severity: "error",
-            message: "Error occurred, could not delete collection",
-          })
-        );
-      } else {
-        dispatch(
-          updateSnackbarData({
-            snackState: true,
-            severity: "success",
-            message: "The chat has been deleted",
-          })
-        );
-      }
-    }
+    const deleteAccountAndUpdatePartnersChats = async () => {
+      const result = await callApiDeleteCollection(
+        { chatPartners: chatPartners },
+        userUid,
+        userNP
+      );
+      return result;
+    };
+    // if (result === false) {
+    //   dispatch(
+    //     updateSnackbarData({
+    //       snackState: true,
+    //       severity: "error",
+    //       message: "Error occurred, could not delete collection",
+    //     })
+    //   );
+    // } else {
+    //   dispatch(
+    //     updateSnackbarData({
+    //       snackState: true,
+    //       severity: "success",
+    //       message: "The chat has been deleted",
+    //     })
+    //   );
+    // }
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 50);
+
+    signOut(auth)
+      .then(() => {
+        // Sign-out successful.
+        console.log("Sign-out successful.");
+        deleteAccountAndUpdatePartnersChats();
+      })
+      .catch((error) => {
+        // An error happened.
+        console.log(`Sign-out failed: ${error}`);
+      });
   };
 
   const [open, setOpen] = useState(false);
