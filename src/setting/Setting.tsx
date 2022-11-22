@@ -30,23 +30,6 @@ export default function Setting() {
       );
       return result;
     };
-    // if (result === false) {
-    //   dispatch(
-    //     updateSnackbarData({
-    //       snackState: true,
-    //       severity: "error",
-    //       message: "Error occurred, could not delete collection",
-    //     })
-    //   );
-    // } else {
-    //   dispatch(
-    //     updateSnackbarData({
-    //       snackState: true,
-    //       severity: "success",
-    //       message: "The chat has been deleted",
-    //     })
-    //   );
-    // }
 
     setTimeout(() => {
       window.location.reload();
