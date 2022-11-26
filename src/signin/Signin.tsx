@@ -5,8 +5,10 @@ import LockIcon from "../icon/LockIcon";
 import SigninEmail from "./SigninEmail";
 import SigninPassword from "./SigninPassword";
 import Button1 from "../reusableComponents/Button1";
+import { useTranslation } from "react-i18next";
 
 export default function Signin() {
+  const { t, i18n } = useTranslation("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [responseData, setResponseData] = useState("");
@@ -42,7 +44,9 @@ export default function Signin() {
 
   return (
     <div>
-      <div className="login-title">Sign in</div>
+      <button onClick={() => i18n.changeLanguage("ja")}>ja</button>
+      <button onClick={() => i18n.changeLanguage("en")}>en</button>
+      <div className="login-title">{t("title")}</div>
       <LockIcon />
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className="register-error-message">{responseData}</div>
