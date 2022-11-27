@@ -10,8 +10,10 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import ListItem from "@mui/material/ListItem";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
+import { useTranslation } from "react-i18next";
 
 export default function SignoutAlert() {
+  const { t } = useTranslation(["auth", "common"]);
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -43,11 +45,13 @@ export default function SignoutAlert() {
         <DialogTitle id="alert-dialog-title">{"Confirm sign out"}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you sign out?
+            {t("SignoutConfirm")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancel}>Cancel</Button>
+          <Button onClick={handleCancel}>
+            {t("cancel", { ns: "common" })}
+          </Button>
           <Signout />
         </DialogActions>
       </Dialog>

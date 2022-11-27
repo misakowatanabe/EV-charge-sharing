@@ -9,4 +9,5 @@ export const auth = {
   userName: "ユーザーネーム",
   SwitchToSignup: "アカウントの登録はお済みですか？サインアップ",
   SwitchToSignin: "すでにアカウントをお持ちですか？サインイン",
+  SignoutConfirm: "本当にサインアウトしますか？",
 };

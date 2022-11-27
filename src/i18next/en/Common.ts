@@ -1,1 +1,1 @@
-export const common = {};
+export const common = { cancel: "Cancel" };
