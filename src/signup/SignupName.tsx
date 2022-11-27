@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import TextField from "@mui/material/TextField";
+import { useTranslation } from "react-i18next";
 
 type signupNameProps = {
   name: string;
@@ -7,9 +8,11 @@ type signupNameProps = {
 };
 
 export default function SignupName({ name, setName }: signupNameProps) {
+  const { t } = useTranslation("auth");
+
   return (
     <div>
-      <div className="title">User Name</div>
+      <div className="title">{t("userName")}</div>
       <div className="textfield">
         <TextField
           autoFocus

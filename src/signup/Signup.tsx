@@ -21,8 +21,10 @@ import { updateLoadingData } from "../context/slices/LoadingDataSlice";
 import { updateSnackbarData } from "../context/slices/SnackbarDataSlice";
 import { ENDPOINT } from "../Config";
 import { io } from "socket.io-client";
+import { useTranslation } from "react-i18next";
 
 export default function Signup() {
+  const { t, i18n } = useTranslation("auth");
   const [name, setName] = useState("");
   const [numberPlate, setNumberPlate] = useState("");
   const [email, setEmail] = useState("");
@@ -125,7 +127,9 @@ export default function Signup() {
 
   return (
     <div>
-      <div className="login-title">Sign up</div>
+      <button onClick={() => i18n.changeLanguage("ja")}>ja</button>
+      <button onClick={() => i18n.changeLanguage("en")}>en</button>
+      <div className="login-title">{t("signupTitle")}</div>
       <LockIcon />
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className="register-error-message">{responseData}</div>
@@ -147,9 +151,7 @@ export default function Signup() {
           </Button1>
         </div>
         <NavLink to={`/signin`}>
-          <div className="toggle-signin-signup">
-            Already have an account? Sign in
-          </div>
+          <div className="toggle-signin-signup">{t("SwitchToSignin")}</div>
         </NavLink>
       </form>
     </div>

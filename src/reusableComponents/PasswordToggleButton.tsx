@@ -1,4 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
+
 
 type passwordToggleButtonProps = {
   passwordShown: boolean;
@@ -9,6 +11,7 @@ export default function PasswordToggleButton({
   passwordShown,
   setPasswordShown,
 }: passwordToggleButtonProps) {
+  const { t } = useTranslation("auth");
   const togglePassword = () => {
     setPasswordShown(!passwordShown);
   };
@@ -19,7 +22,7 @@ export default function PasswordToggleButton({
       data-type="button"
       className="password-toggle-button"
     >
-      Show Password
+      {t("showPassword")}
     </div>
   );
 }

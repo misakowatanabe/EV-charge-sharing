@@ -8,7 +8,7 @@ import Button1 from "../reusableComponents/Button1";
 import { useTranslation } from "react-i18next";
 
 export default function Signin() {
-  const { t, i18n } = useTranslation("signin");
+  const { t, i18n } = useTranslation("auth");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [responseData, setResponseData] = useState("");
@@ -46,7 +46,7 @@ export default function Signin() {
     <div>
       <button onClick={() => i18n.changeLanguage("ja")}>ja</button>
       <button onClick={() => i18n.changeLanguage("en")}>en</button>
-      <div className="login-title">{t("title")}</div>
+      <div className="login-title">{t("signinTitle")}</div>
       <LockIcon />
       <form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <div className="register-error-message">{responseData}</div>
@@ -58,9 +58,7 @@ export default function Signin() {
           </Button1>
         </div>
         <NavLink to={`/signup`}>
-          <div className="toggle-signin-signup">
-            Don't have an account? Sign up
-          </div>
+          <div className="toggle-signin-signup">{t("SwitchToSignup")}</div>
         </NavLink>
       </form>
     </div>

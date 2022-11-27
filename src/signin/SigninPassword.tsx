@@ -1,6 +1,7 @@
 import { useState, Dispatch, SetStateAction } from "react";
 import PasswordToggleButton from "../reusableComponents/PasswordToggleButton";
 import TextField from "@mui/material/TextField";
+import { useTranslation } from "react-i18next";
 
 type signinPasswordProps = {
   password: string;
@@ -11,12 +12,13 @@ export default function SigninPassword({
   password,
   setPassword,
 }: signinPasswordProps) {
+  const { t } = useTranslation("auth");
   const [passwordShown, setPasswordShown] = useState(false);
 
   return (
     <div>
       <div className="password-text-container">
-        <div>Password</div>
+        <div>{t("password")}</div>
         <PasswordToggleButton
           passwordShown={passwordShown}
           setPasswordShown={setPasswordShown}
